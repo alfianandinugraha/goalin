@@ -1,6 +1,7 @@
 import supabase from "utils/vendors/supabase";
 import { v4 as uuidv4 } from "uuid";
 import { RegisterBody } from "utils/constants/schemas/register";
+import { LoginBody } from "utils/constants/schemas/login";
 import postgreErrors from "utils/constants/messages/postgre-errors";
 import hashServices from "services/hash";
 
@@ -31,8 +32,33 @@ const registerUser = async (body) => {
   };
 };
 
+/**
+ * @param {LoginBody} body
+ */
+const loginUser = async (body) => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("email, password, user_id")
+    .eq("email", body.email)
+    .limit(1)
+    .single();
+
+  if (error) throw new Error("Login gagal");
+
+  if (!data) throw new Error("User tidak ditemukan");
+
+  const isValid = hashServices.compare(body.password, data.password);
+
+  if (!isValid) throw new Error("User tidak ditemukan");
+
+  return {
+    id: data.user_id,
+  };
+};
+
 const authServices = {
   register: registerUser,
+  login: loginUser,
 };
 
 export default authServices;

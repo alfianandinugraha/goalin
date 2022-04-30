@@ -6,8 +6,13 @@ const signToken = (body) => {
   });
 };
 
+const decodeToken = (token) => {
+  return jwt.verify(token, process.env.NEXT_PUBLIC_PRIVATE_JWT_KEY);
+};
+
 const tokenServices = {
   sign: signToken,
+  decode: decodeToken,
 };
 
 export default tokenServices;

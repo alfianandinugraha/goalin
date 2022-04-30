@@ -12,10 +12,13 @@
     "@supabase/supabase-js": "^1.35.2",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.5.1",
     "next": "12.1.5",
     "next-connect": "^0.12.2",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-dom": "18.1.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "8.14.0",

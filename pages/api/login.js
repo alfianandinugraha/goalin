@@ -11,7 +11,7 @@ export default connect().post(async (req, res) => {
   const validate = ajv.compile(loginBodySchema);
 
   if (!validate(req.body)) {
-    return res.statusCode(400).json(response.INVALID_BODY);
+    return res.status(400).json(response.INVALID_BODY);
   }
 
   return res.json({

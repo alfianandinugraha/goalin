@@ -24,6 +24,16 @@ import categoryServices from "services/category";
  */
 
 /**
+ * @typedef UpdateGoalServiceBody
+ * @property {string} name
+ * @property {string} goalId
+ * @property {string} userId
+ * @property {string} categoryId
+ * @property {number} total
+ * @property {string} notes
+ */
+
+/**
  * @param {CreateGoalServiceBody} body
  */
 const createGoal = async (body) => {
@@ -164,11 +174,45 @@ const removeGoal = async (body) => {
   return {};
 };
 
+/**
+ * @param {UpdateGoalServiceBody} body
+ * @description Only update column name, notes, total, and category_id
+ */
+const updateGoal = async (body) => {
+  await categoryServices.get(body.categoryId);
+
+  const { error } = await supabase
+    .from("goals")
+    .update({
+      name: body.name,
+      notes: body.notes,
+      total: body.total,
+      category_id: body.categoryId,
+    })
+    .match({
+      goal_id: body.goalId,
+      user_id: body.userId,
+    });
+
+  if (error) {
+    console.log(error);
+    throw new Error("Gagal memperbarui goal");
+  }
+
+  const goal = await goalServices.get({
+    userId: body.userId,
+    goalId: body.goalId,
+  });
+
+  return goal;
+};
+
 const goalServices = {
   create: createGoal,
   getAll: getAllGoals,
   get: getDetail,
   remove: removeGoal,
+  update: updateGoal,
 };
 
 export default goalServices;

@@ -37,6 +37,7 @@ const createGoal = async (body) => {
     userId: body.userId,
     name: body.name,
     notes: body.notes,
+    amount: 0,
     total: body.total,
     category,
   };
@@ -45,10 +46,21 @@ const createGoal = async (body) => {
 const getAllGoals = async (userId) => {
   const { data, error } = await supabase
     .from("goals")
-    .select("*, categories:category_id(category_id, name)")
+    .select(
+      `
+        *,
+        categories:category_id(
+          category_id, name
+        ),
+        transactions(
+          transaction_id, amount
+        )
+      `
+    )
     .eq("user_id", userId);
 
   if (error) {
+    console.log(error);
     throw new Error("Gagal mendapatkan semua goals");
   }
 
@@ -58,6 +70,7 @@ const getAllGoals = async (userId) => {
       userId: item.user_id,
       name: item.name,
       total: item.total,
+      amount: item.transactions.reduce((prev, next) => prev + next.amount, 0),
       notes: item.notes,
       category: {
         id: item.categories.category_id,

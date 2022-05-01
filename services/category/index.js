@@ -17,12 +17,12 @@ const getDetail = async (categoryId) => {
     throw error;
   }
 
-  return data.map((item) => {
-    return {
-      id: item.category_id,
-      name: item.name,
-    };
-  });
+  const [category] = data;
+
+  return {
+    id: category.category_id,
+    name: category.name,
+  };
 };
 
 const getAll = async () => {

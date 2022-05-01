@@ -18,6 +18,12 @@ import categoryServices from "services/category";
  */
 
 /**
+ * @typedef GetDetailGoalServiceBody
+ * @property {string} userId
+ * @property {string} goalId
+ */
+
+/**
  * @param {CreateGoalServiceBody} body
  */
 const createGoal = async (body) => {
@@ -86,7 +92,10 @@ const getAllGoals = async (userId) => {
   });
 };
 
-const get = async (goalId) => {
+/**
+ * @param {GetDetailGoalServiceBody} body
+ */
+const getDetail = async (body) => {
   const { data, error } = await supabase
     .from("goals")
     .select(
@@ -100,7 +109,8 @@ const get = async (goalId) => {
         )
       `
     )
-    .eq("goal_id", goalId);
+    .eq("goal_id", body.goalId)
+    .eq("user_id", body.userId);
 
   if (error) {
     console.log(error);
@@ -157,7 +167,7 @@ const removeGoal = async (body) => {
 const goalServices = {
   create: createGoal,
   getAll: getAllGoals,
-  get,
+  get: getDetail,
   remove: removeGoal,
 };
 

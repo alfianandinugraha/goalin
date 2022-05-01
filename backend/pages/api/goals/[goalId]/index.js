@@ -6,7 +6,7 @@ export default connectAuth()
     const { goalId } = req.query;
 
     try {
-      const goal = await goalServices.get(goalId);
+      const goal = await goalServices.get({ goalId, userId: req.user.id });
       return res.json({
         message: "Berhasil mendapatkan detail goal",
         payload: goal,

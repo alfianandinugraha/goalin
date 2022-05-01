@@ -1,14 +1,18 @@
 import tokenServices from "services/token";
 import userServices from "services/user";
+import response from "utils/constants/messages/response";
 
 const tokenMiddleware = async (req, res, next) => {
-  const [, token] = req.headers.authorization.split(" ");
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    return res.status(400).json(response.INVALID_TOKEN);
+  }
+
+  const [, token] = authorization.split(" ");
 
   if (!token) {
-    return res.status(400).json({
-      message: "Invalid token",
-      payload: {},
-    });
+    return res.status(400).json(response.INVALID_TOKEN);
   }
 
   try {

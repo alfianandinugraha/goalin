@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 import categoryServices from "services/category";
 
 /**
- * @typedef CreateGoal
+ * @typedef CreateGoalServiceBody
  * @property {string} name
  * @property {string} userId
  * @property {string} categoryId
@@ -12,7 +12,13 @@ import categoryServices from "services/category";
  */
 
 /**
- * @param {CreateGoal} body
+ * @typedef GetGoalServiceBody
+ * @property {string} userId
+ * @property {string} goalId
+ */
+
+/**
+ * @param {CreateGoalServiceBody} body
  */
 const createGoal = async (body) => {
   const goalId = nanoid();
@@ -80,9 +86,54 @@ const getAllGoals = async (userId) => {
   });
 };
 
+const get = async (goalId) => {
+  const { data, error } = await supabase
+    .from("goals")
+    .select(
+      `
+        *,
+        categories:category_id(
+          category_id, name
+        ),
+        transactions(
+          transaction_id, amount
+        )
+      `
+    )
+    .eq("goal_id", goalId);
+
+  if (error) {
+    console.log(error);
+    throw new Error("Gagal mendapatkan detail goals");
+  }
+
+  if (!data.length) {
+    const error = new Error("Goal tidak ditemukan");
+    error.statusCode = 404;
+
+    throw error;
+  }
+
+  const [goal] = data;
+
+  return {
+    id: goal.goal_id,
+    userId: goal.user_id,
+    name: goal.name,
+    total: goal.total,
+    amount: goal.transactions.reduce((prev, next) => prev + next.amount, 0),
+    notes: goal.notes,
+    category: {
+      id: goal.categories.category_id,
+      name: goal.categories.name,
+    },
+  };
+};
+
 const goalServices = {
   create: createGoal,
   getAll: getAllGoals,
+  get,
 };
 
 export default goalServices;

@@ -12,7 +12,7 @@ import categoryServices from "services/category";
  */
 
 /**
- * @typedef GetGoalServiceBody
+ * @typedef RemoveGoalServiceBody
  * @property {string} userId
  * @property {string} goalId
  */
@@ -130,10 +130,35 @@ const get = async (goalId) => {
   };
 };
 
+/**
+ * @param {RemoveGoalServiceBody} body
+ */
+const removeGoal = async (body) => {
+  const { data, error } = await supabase.from("goals").delete().match({
+    goal_id: body.goalId,
+    user_id: body.userId,
+  });
+
+  if (error) {
+    console.log(error);
+    throw new Error("Gagal menghapus goal");
+  }
+
+  if (!data.length) {
+    const error = new Error("Goal tidak ditemukan");
+    error.statusCode = 404;
+
+    throw error;
+  }
+
+  return {};
+};
+
 const goalServices = {
   create: createGoal,
   getAll: getAllGoals,
   get,
+  remove: removeGoal,
 };
 
 export default goalServices;

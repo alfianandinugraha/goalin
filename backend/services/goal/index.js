@@ -42,8 +42,34 @@ const createGoal = async (body) => {
   };
 };
 
+const getAllGoals = async (userId) => {
+  const { data, error } = await supabase
+    .from("goals")
+    .select("*, categories:category_id(category_id, name)")
+    .eq("user_id", userId);
+
+  if (error) {
+    throw new Error("Gagal mendapatkan semua goals");
+  }
+
+  return data.map((item) => {
+    return {
+      id: item.goal_id,
+      userId: item.user_id,
+      name: item.name,
+      total: item.total,
+      notes: item.notes,
+      category: {
+        id: item.categories.category_id,
+        name: item.categories.name,
+      },
+    };
+  });
+};
+
 const goalServices = {
   create: createGoal,
+  getAll: getAllGoals,
 };
 
 export default goalServices;

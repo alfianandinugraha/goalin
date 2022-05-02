@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="37dp"
+    android:paddingHorizontal="20dp"
+    android:orientation="vertical"
+    tools:context=".ProfileActivity">
+    <com.example.goalin.views.Back
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="115dp"
+        android:layout_height="115dp"
+        android:background="@drawable/circel_shape"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginBottom="21dp">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_baseline_person_white"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alfian Andi Nugraha"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        android:textSize="20dp"
+        android:id="@+id/full_name"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_marginBottom="8dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="me@alfianandi.dev"
+        android:textColor="#D2D2D2"
+        android:textSize="14dp"
+        android:textAlignment="center"
+        android:layout_marginBottom="40dp"
+        android:id="@+id/email" />
+    <com.example.goalin.views.Button
+        android:text="edit profile"
+        style="@style/style_button_outline"
+        android:id="@+id/to_edit_profile_btn" />
+    <com.example.goalin.views.Button
+        android:layout_marginTop="16dp"
+        android:text="keluar"
+        style="@style/style_button_outline_danger"
+        android:id="@+id/logout_btn"/>
+</LinearLayout>

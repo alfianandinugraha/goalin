@@ -20,6 +20,12 @@
             android:paddingTop="20dp"
             android:id="@+id/fragment" />
 
+        <com.example.goalin.views.Button
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"/>
+
     </LinearLayout>
 
 

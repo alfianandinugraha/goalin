@@ -45,7 +45,8 @@
                     android:layout_height="37dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:background="@drawable/circel_shape">
+                    android:background="@drawable/circel_shape"
+                    android:id="@+id/to_profile_btn">
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"

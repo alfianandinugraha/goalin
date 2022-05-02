@@ -11,10 +11,17 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
 
         val logoutButton = findViewById<Button>(R.id.logout_btn)
+        val toEditProfileButton = findViewById<Button>(R.id.to_edit_profile_btn)
+
         val loginActivity = Intent(baseContext, LoginActivity::class.java)
+        val editProfileActivity = Intent(baseContext, EditProfileActivity::class.java)
 
         logoutButton.setOnClickListener {
             startActivity(loginActivity)
+        }
+
+        toEditProfileButton.setOnClickListener {
+            startActivity(editProfileActivity)
         }
     }
 }

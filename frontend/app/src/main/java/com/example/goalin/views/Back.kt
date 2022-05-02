@@ -1,5 +1,6 @@
 package com.example.goalin.views
 
+import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -15,6 +16,8 @@ class Back(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs)
 
         setOnClickListener {
             Log.d("Event", "Back...")
+            val activity: Activity = context as Activity
+            activity.finish()
         }
     }
 }

@@ -102,6 +102,7 @@
         app:tint="@color/white"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_baseline_add_white"/>
+        android:src="@drawable/ic_baseline_add_white"
+        android:id="@+id/to_add_goal_btn"/>
 
 </RelativeLayout>

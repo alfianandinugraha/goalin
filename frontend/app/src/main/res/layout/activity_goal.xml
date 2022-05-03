@@ -89,7 +89,8 @@
             android:layout_height="wrap_content"
             style="@style/style_button_outline"
             android:text="Edit Goal"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:id="@+id/edit_btn"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

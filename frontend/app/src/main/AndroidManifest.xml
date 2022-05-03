@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Goalin">
         <activity
+            android:name=".EditGoalActivity"
+            android:exported="true" />
+        <activity
             android:name=".GoalActivity"
             android:exported="true" />
         <activity

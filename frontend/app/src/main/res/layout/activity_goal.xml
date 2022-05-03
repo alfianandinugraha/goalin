@@ -10,7 +10,7 @@
         android:paddingTop="37dp"
         android:paddingHorizontal="20dp"
         android:orientation="vertical">
-        <com.example.goalin.views.Back
+        <com.example.goalin.views.BackView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <LinearLayout
@@ -79,12 +79,12 @@
             android:text="-"
             android:layout_marginTop="6dp"
             android:textColor="@color/black" />
-        <com.example.goalin.views.Button
+        <com.example.goalin.views.ButtonView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tambah Setoran"
             android:layout_marginTop="26dp" />
-        <com.example.goalin.views.Button
+        <com.example.goalin.views.ButtonView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/style_button_outline"

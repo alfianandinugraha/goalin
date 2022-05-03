@@ -58,35 +58,35 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingHorizontal="20dp">
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>
-                <com.example.goalin.views.GoalItem
+                <com.example.goalin.views.GoalItemView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"/>

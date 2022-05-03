@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.example.goalin.R
 
-class Back(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
+class BackView(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs) {
     init {
         LayoutInflater
             .from(context)

@@ -19,20 +19,20 @@
             style="@style/style_auth_title"
             android:text="Login"
             android:layout_marginBottom="40dp"/>
-        <com.example.goalin.views.EditText
+        <com.example.goalin.views.EditTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
             android:id="@+id/email"
             android:inputType="textEmailAddress"
             android:hint="Email" />
-        <com.example.goalin.views.EditText
+        <com.example.goalin.views.EditTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/password"
             android:inputType="textPassword"
             android:hint="Password" />
-        <com.example.goalin.views.Button
+        <com.example.goalin.views.ButtonView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="login"

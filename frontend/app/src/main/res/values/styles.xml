@@ -19,9 +19,11 @@
         <item name="android:textColor">@color/red_500</item>
         <item name="android:background">@drawable/button_outline_danger_state</item>
     </style>
+    <style name="style_edit_text_theme" parent="Theme.MaterialComponents.Light">
+        <item name="colorAccent">@color/green_500</item>
+    </style>
     <style name="style_edit_text" parent="Widget.AppCompat.EditText">
         <item name="android:textSize">14dp</item>
-        <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
         <item name="android:background">@drawable/edit_text_state</item>
     </style>
     <style name="style_auth_title">

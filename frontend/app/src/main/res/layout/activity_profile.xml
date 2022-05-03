@@ -10,7 +10,8 @@
     tools:context=".ProfileActivity">
     <com.example.goalin.views.BackView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:backTo=".MainActivity" />
     <LinearLayout
         android:layout_width="115dp"
         android:layout_height="115dp"

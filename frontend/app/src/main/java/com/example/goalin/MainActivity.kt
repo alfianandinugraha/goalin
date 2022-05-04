@@ -14,8 +14,8 @@ class MainActivity : AppCompatActivity() {
         val toAddGoalButton = findViewById<FloatingActionButton>(R.id.to_add_goal_btn)
         val toProfileButton = findViewById<LinearLayout>(R.id.to_profile_btn)
 
-        val addGoalActivity = Intent(applicationContext, AddGoalActivity::class.java)
-        val profileActivity = Intent(applicationContext, ProfileActivity::class.java)
+        val addGoalActivity = Intent(this, AddGoalActivity::class.java)
+        val profileActivity = Intent(this, ProfileActivity::class.java)
 
         toAddGoalButton.setOnClickListener {
             startActivity(addGoalActivity)

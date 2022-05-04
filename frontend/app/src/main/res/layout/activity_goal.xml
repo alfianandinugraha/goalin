@@ -85,7 +85,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tambah Setoran"
-            android:layout_marginTop="26dp" />
+            android:layout_marginTop="26dp"
+            android:id="@+id/add_transaction" />
         <com.example.goalin.views.ButtonView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

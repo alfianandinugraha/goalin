@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:layout_marginLeft="4dp"
-                android:id="@+id/register_text"
+                android:id="@+id/login_text"
                 android:textColor="@color/green_400" />
         </LinearLayout>
     </LinearLayout>

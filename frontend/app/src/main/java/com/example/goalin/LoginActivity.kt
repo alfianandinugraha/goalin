@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.service.AuthService
@@ -27,10 +28,16 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val emailEditText = findViewById<EditTextView>(R.id.email)
+        val registerTextView = findViewById<TextView>(R.id.register_text)
         val passwordEditText = findViewById<EditTextView>(R.id.password)
         val loginButton = findViewById<ButtonView>(R.id.login_btn)
 
         val mainActivity = Intent(this, MainActivity::class.java)
+        val registerActivity = Intent(this, RegisterActivity::class.java)
+
+        registerTextView.setOnClickListener {
+            startActivity(registerActivity)
+        }
 
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()

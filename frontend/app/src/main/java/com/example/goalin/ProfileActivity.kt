@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.goalin.service.AuthService
 import com.example.goalin.views.ButtonView
 
 class ProfileActivity : AppCompatActivity() {
@@ -16,8 +17,11 @@ class ProfileActivity : AppCompatActivity() {
         val loginActivity = Intent(baseContext, LoginActivity::class.java)
         val editProfileActivity = Intent(baseContext, EditProfileActivity::class.java)
 
+        val authService = AuthService(this)
+
         logoutButton.setOnClickListener {
             startActivity(loginActivity)
+            authService.logout()
         }
 
         toEditProfileButton.setOnClickListener {

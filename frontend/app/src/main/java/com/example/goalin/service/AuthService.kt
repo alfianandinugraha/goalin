@@ -55,4 +55,9 @@ class AuthService(val context: Context) {
 
         return@coroutineScope response.body()!!
     }
+
+    fun logout() {
+        val tokenServices = TokenService(context)
+        tokenServices.clear()
+    }
 }

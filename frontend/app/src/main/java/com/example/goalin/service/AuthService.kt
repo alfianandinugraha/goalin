@@ -33,4 +33,26 @@ class AuthService(val context: Context) {
 
         return@coroutineScope response.body()!!
     }
+
+    suspend fun register(fullName: String, email: String, password: String) = coroutineScope {
+        val body = JsonObject()
+        body.addProperty("fullName", fullName)
+        body.addProperty("email", email)
+        body.addProperty("password", password)
+
+        val tokenServices = TokenService(context)
+
+        val responseDeferred = async { repository.register(body) }
+        val response = responseDeferred.await()
+
+        if (!response.isSuccessful) throw ApiResponseException(response)
+
+        val token = response.body()?.payload?.token
+
+        if (token != null) {
+            tokenServices.store(token)
+        }
+
+        return@coroutineScope response.body()!!
+    }
 }

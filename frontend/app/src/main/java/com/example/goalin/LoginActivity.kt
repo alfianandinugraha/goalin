@@ -73,4 +73,6 @@ class LoginActivity : AppCompatActivity() {
         super.onDestroy()
         scope.cancel()
     }
+
+    override fun onBackPressed() {}
 }

@@ -15,7 +15,7 @@ class TokenService(val context: Context) {
     }
 
     fun get(): String? {
-        return db.getString(_key, "")
+        return db.getString(_key, null)
     }
 
     fun clear() {

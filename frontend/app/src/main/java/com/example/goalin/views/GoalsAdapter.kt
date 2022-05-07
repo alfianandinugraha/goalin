@@ -12,6 +12,7 @@ import com.example.goalin.GoalActivity
 import com.example.goalin.R
 import com.example.goalin.model.Goal
 import com.example.goalin.util.format.Currency
+import com.google.gson.Gson
 
 class GoalsAdapter(
     private val context: Context, private val goals: List<Goal>
@@ -24,7 +25,7 @@ class GoalsAdapter(
         val container: LinearLayout = view.findViewById(R.id.goal_item)
     }
 
-    private val goalActivity = Intent(context, GoalActivity::class.java)
+    private val goalActivityIntent = Intent(context, GoalActivity::class.java)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(
@@ -44,7 +45,8 @@ class GoalsAdapter(
         holder.total.text = totalText
 
         holder.container.setOnClickListener {
-            context.startActivity(goalActivity)
+            goalActivityIntent.putExtra("goal", Gson().toJson(goal))
+            context.startActivity(goalActivityIntent)
         }
     }
 

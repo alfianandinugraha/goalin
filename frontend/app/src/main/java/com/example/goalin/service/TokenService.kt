@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 class TokenService(val context: Context) {
     private val _key = "access_token"
 
-    private val db: SharedPreferences = context.getSharedPreferences("Token", 0)
+    private val db: SharedPreferences = context.getSharedPreferences("Token", Context.MODE_PRIVATE)
 
     fun store(token: String) {
         val editor = db.edit()
@@ -21,6 +21,6 @@ class TokenService(val context: Context) {
     fun clear() {
         val editor = db.edit()
 
-        editor.clear().apply()
+        editor.remove(_key).apply()
     }
 }

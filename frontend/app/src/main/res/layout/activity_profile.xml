@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Alfian Andi Nugraha"
+        android:text=""
         android:textColor="@color/black"
         android:textAllCaps="true"
         android:textSize="20dp"
@@ -38,7 +38,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="me@alfianandi.dev"
+        android:text=""
         android:textColor="#D2D2D2"
         android:textSize="14dp"
         android:textAlignment="center"

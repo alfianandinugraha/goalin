@@ -19,27 +19,28 @@
         android:layout_height="wrap_content"
         android:hint="Nama Barang"
         android:text="Laptop"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:enabled="false" />
     <com.example.goalin.views.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Jumlah Uang"
         android:inputType="numberDecimal"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="20dp"/>
     <com.example.goalin.views.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:hint="Pilih Dompet" />
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.views.DatePickerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tanggal" />
+        android:hint="Tanggal"
+        android:id="@+id/date_picker" />
     <com.example.goalin.views.ButtonView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tambah Transaksi"
         android:layout_marginTop="40dp"
-        android:id="@+id/save_btn"/>
+        android:id="@+id/save_btn" />
 </LinearLayout>

@@ -28,4 +28,13 @@ class GoalService(val context: Context) {
 
         return@coroutineScope response.body()!!
     }
+
+    suspend fun getAll() = coroutineScope {
+        val responseDeferred = async { repository.getAll() }
+        val response = responseDeferred.await()
+
+        if (!response.isSuccessful) throw ApiResponseException(response)
+
+        return@coroutineScope response.body()!!
+    }
 }

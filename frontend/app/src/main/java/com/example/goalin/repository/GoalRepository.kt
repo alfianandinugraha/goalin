@@ -11,4 +11,7 @@ import retrofit2.http.POST
 interface GoalRepository {
     @POST("/api/goals")
     suspend fun store(@Body body: GoalService.CreateGoalBodyRequest): Response<ApiResponseBody<Goal>>
+
+    @GET("/api/goals")
+    suspend fun getAll(): Response<ApiResponseBody<List<Goal>>>
 }

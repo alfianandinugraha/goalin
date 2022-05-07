@@ -7,7 +7,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.service.AuthService
-import com.example.goalin.service.TokenService
 import com.example.goalin.views.ButtonView
 import com.example.goalin.views.EditTextView
 import kotlinx.coroutines.CoroutineName
@@ -21,9 +20,6 @@ class LoginActivity : AppCompatActivity() {
     private val scope = CoroutineScope(CoroutineName("LoginScope") + Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val tokenService = TokenService(this)
-        tokenService.clear()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 

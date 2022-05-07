@@ -27,10 +27,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Alfian Andi Nugraha"
+        android:id="@+id/full_name_edit_text"
         android:layout_marginBottom="30dp"/>
     <com.example.goalin.views.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/email_edit_text"
         android:text="me@alfianandi.dev"
         android:layout_marginBottom="40dp"/>
     <com.example.goalin.views.ButtonView

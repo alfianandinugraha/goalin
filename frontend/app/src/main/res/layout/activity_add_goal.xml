@@ -25,13 +25,15 @@
         android:hint="Harga Barang"
         android:inputType="numberDecimal"
         android:layout_marginBottom="30dp"/>
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.views.SelectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Pilih Kategori Barang" />
+        android:id="@+id/category_select"
+        android:hint="Pilih Kategori" />
     <com.example.goalin.views.ButtonView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tambah Goal"
+        android:id="@+id/add_btn"
         android:layout_marginTop="40dp" />
 </LinearLayout>

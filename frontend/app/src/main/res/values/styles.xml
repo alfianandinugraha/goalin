@@ -12,7 +12,7 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="style_button_outline" parent="style_button">
-        <item name="android:textColor">@color/green_400</item>
+        <item name="android:textColor">@color/green_500</item>
         <item name="android:background">@drawable/button_outline_primary_state</item>
     </style>
     <style name="style_button_outline_danger" parent="style_button">
@@ -24,6 +24,7 @@
     </style>
     <style name="style_edit_text" parent="Widget.AppCompat.EditText">
         <item name="android:textSize">14dp</item>
+        <item name="android:textColorHint">@color/gray_500</item>
         <item name="android:background">@drawable/edit_text_state</item>
     </style>
     <style name="style_auth_title">

@@ -9,9 +9,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 class AuthService(val context: Context) {
-    companion object {
-        val repository: AuthRepository = Http.create(AuthRepository::class.java)
-    }
+    private val repository: AuthRepository = Http
+        .builder
+        .build()
+        .create(AuthRepository::class.java)
 
     suspend fun login(email: String, password: String) = coroutineScope {
         val body = JsonObject()

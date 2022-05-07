@@ -18,12 +18,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nama Barang"
+        android:id="@+id/name"
         android:layout_marginBottom="30dp" />
     <com.example.goalin.views.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Harga Barang"
         android:inputType="numberDecimal"
+        android:id="@+id/total"
         android:layout_marginBottom="30dp"/>
     <com.example.goalin.views.SelectView
         android:layout_width="match_parent"

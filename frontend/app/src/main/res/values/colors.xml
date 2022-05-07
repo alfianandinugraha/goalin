@@ -27,5 +27,15 @@
     <color name="red_700">#e70a0a</color>
     <color name="red_800">#e40808</color>
     <color name="red_900">#df0404</color>
+    <color name="gray_50">#fbfbfb</color>
+    <color name="gray_100">#f4f4f4</color>
+    <color name="gray_200">#ededed</color>
+    <color name="gray_300">#e5e5e5</color>
+    <color name="gray_400">#e0e0e0</color>
+    <color name="gray_500">#dadada</color>
+    <color name="gray_600">#d6d6d6</color>
+    <color name="gray_700">#d0d0d0</color>
+    <color name="gray_800">#cbcbcb</color>
+    <color name="gray_900">#c2c2c2</color>
     <color name="transparent">#00000000</color>
 </resources>

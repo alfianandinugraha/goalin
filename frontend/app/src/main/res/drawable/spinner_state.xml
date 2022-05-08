@@ -14,7 +14,8 @@
                         <padding
                             android:bottom="9dp"
                             android:left="9dp"
-                            android:right="9dp"/>
+                            android:right="9dp"
+                            android:top="9dp"/>
                         <stroke android:color="@color/green_500" android:width="1dp" />
                     </shape>
                 </inset>
@@ -34,7 +35,8 @@
                         <padding
                             android:bottom="9dp"
                             android:left="9dp"
-                            android:right="9dp"/>
+                            android:right="9dp"
+                            android:top="9dp"/>
                         <stroke android:color="#DADADA" android:width="1dp" />
                     </shape>
                 </inset>

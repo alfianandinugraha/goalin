@@ -45,12 +45,19 @@ class DatePickerView(context: Context, attrs: AttributeSet):
             0
         )
 
+        if (calendar == null) {
+            calendar = currentCalendar
+            val dateText = "$currentDayOfMonth ${months[currentMonth]} $currentYear"
+            setText(dateText)
+        }
+
         val dialog = DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
-                setText("$dayOfMonth ${months[month]} $year")
+                val dateText = "$dayOfMonth ${months[month]} $year"
+                setText(dateText)
 
-                var newCalendar = Calendar.getInstance()
+                val newCalendar = Calendar.getInstance()
                 newCalendar.set(Calendar.YEAR, year)
                 newCalendar.set(Calendar.MONTH, month)
                 newCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)

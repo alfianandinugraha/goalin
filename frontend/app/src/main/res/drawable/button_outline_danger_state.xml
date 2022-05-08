@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="@android:integer/config_shortAnimTime"
+    android:exitFadeDuration="@android:integer/config_longAnimTime">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <stroke android:color="@color/red_200" android:width="1dp"/>
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <padding android:top="12dp" android:bottom="12dp"/>
+            <solid android:color="@color/white" />
+            <corners android:radius="6dp" />
+            <stroke android:color="@color/red_500" android:width="1dp"/>
+        </shape>
+    </item>
+</selector>

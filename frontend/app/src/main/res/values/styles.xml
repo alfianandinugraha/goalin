@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="style_button">
+        <item name="android:textColor">@color/button_text_state</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontWeight">600</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:background">@drawable/button_state</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="style_button_outline" parent="style_button">
+        <item name="android:textColor">@color/green_500</item>
+        <item name="android:background">@drawable/button_outline_primary_state</item>
+    </style>
+    <style name="style_button_outline_danger" parent="style_button">
+        <item name="android:textColor">@color/red_500</item>
+        <item name="android:background">@drawable/button_outline_danger_state</item>
+    </style>
+    <style name="style_edit_text_theme" parent="Theme.MaterialComponents.Light">
+        <item name="colorAccent">@color/green_500</item>
+    </style>
+    <style name="style_edit_text" parent="Widget.AppCompat.EditText">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColorHint">@color/gray_500</item>
+        <item name="android:background">@drawable/edit_text_state</item>
+        <item name="android:textColor">@color/edit_text_text_state</item>
+    </style>
+    <style name="style_auth_title">
+        <item name="android:textSize">36dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="style_sub_title">
+        <item name="android:textSize">26dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginBottom">40dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>

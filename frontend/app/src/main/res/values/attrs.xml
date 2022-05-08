@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BackView">
+        <attr name="backTo" format="string" />
+    </declare-styleable>
+    <declare-styleable name="SelectView">
+        <attr name="android:hint" format="string" />
+    </declare-styleable>
+</resources>

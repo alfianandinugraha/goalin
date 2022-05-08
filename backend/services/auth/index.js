@@ -39,20 +39,20 @@ const loginUser = async (body) => {
   const { data, error } = await supabase
     .from("users")
     .select("email, password, user_id")
-    .eq("email", body.email)
-    .limit(1)
-    .single();
+    .eq("email", body.email);
 
   if (error) throw new Error("Login gagal");
 
-  if (!data) throw new Error("User tidak ditemukan");
+  if (!data.length) throw new Error("User tidak ditemukan");
 
-  const isValid = hashServices.compare(body.password, data.password);
+  const [user] = data;
+
+  const isValid = hashServices.compare(body.password, user.password);
 
   if (!isValid) throw new Error("User tidak ditemukan");
 
   return {
-    id: data.user_id,
+    id: user.user_id,
   };
 };
 

@@ -27,11 +27,12 @@
         android:hint="Jumlah Uang"
         android:inputType="numberDecimal"
         android:layout_marginBottom="20dp"/>
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.views.SelectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:hint="Pilih Dompet" />
+        android:hint="Pilih Dompet"
+        android:id="@+id/wallet_select_view"/>
     <com.example.goalin.views.DatePickerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

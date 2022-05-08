@@ -20,12 +20,14 @@
         android:hint="Nama Barang"
         android:text="Laptop"
         android:layout_marginBottom="20dp"
+        android:id="@+id/name_edit_text_view"
         android:enabled="false" />
     <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Jumlah Uang"
         android:inputType="numberDecimal"
+        android:id="@+id/amount_edit_text_view"
         android:layout_marginBottom="20dp"/>
     <com.example.goalin.ui.SelectView
         android:layout_width="match_parent"

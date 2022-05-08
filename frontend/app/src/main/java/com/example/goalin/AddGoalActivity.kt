@@ -7,8 +7,8 @@ import android.widget.Toast
 import com.example.goalin.service.CategoryService
 import com.example.goalin.service.GoalService
 import com.example.goalin.util.http.ApiResponseException
-import com.example.goalin.views.ButtonView
-import com.example.goalin.views.SelectView
+import com.example.goalin.ui.ButtonView
+import com.example.goalin.ui.SelectView
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

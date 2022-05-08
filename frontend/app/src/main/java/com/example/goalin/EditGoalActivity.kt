@@ -2,7 +2,7 @@ package com.example.goalin
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.goalin.views.ButtonView
+import com.example.goalin.ui.ButtonView
 
 class EditGoalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

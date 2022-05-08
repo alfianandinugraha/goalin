@@ -3,13 +3,12 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.goalin.service.GoalService
 import com.example.goalin.util.http.ApiResponseException
-import com.example.goalin.views.GoalsAdapter
+import com.example.goalin.ui.GoalsAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope

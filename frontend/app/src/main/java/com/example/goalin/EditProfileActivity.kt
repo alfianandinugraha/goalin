@@ -3,7 +3,7 @@ package com.example.goalin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.goalin.model.User
-import com.example.goalin.views.EditTextView
+import com.example.goalin.ui.EditTextView
 import com.google.gson.Gson
 
 class EditProfileActivity : AppCompatActivity() {

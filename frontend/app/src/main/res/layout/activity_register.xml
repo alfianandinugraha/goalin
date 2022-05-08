@@ -19,27 +19,27 @@
             style="@style/style_auth_title"
             android:text="Register"
             android:layout_marginBottom="40dp"/>
-        <com.example.goalin.views.EditTextView
+        <com.example.goalin.ui.EditTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
             android:id="@+id/full_name"
             android:inputType="text"
             android:hint="Nama Lengkap" />
-        <com.example.goalin.views.EditTextView
+        <com.example.goalin.ui.EditTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
             android:id="@+id/email"
             android:inputType="textEmailAddress"
             android:hint="Email" />
-        <com.example.goalin.views.EditTextView
+        <com.example.goalin.ui.EditTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/password"
             android:inputType="textPassword"
             android:hint="Password" />
-        <com.example.goalin.views.ButtonView
+        <com.example.goalin.ui.ButtonView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="register"

@@ -1,4 +1,4 @@
-package com.example.goalin.views
+package com.example.goalin.ui
 
 import android.app.DatePickerDialog
 import android.content.Context

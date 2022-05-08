@@ -1,4 +1,4 @@
-package com.example.goalin.views
+package com.example.goalin.ui
 
 import android.content.Context
 import android.util.AttributeSet

@@ -8,7 +8,7 @@ import android.widget.Toast
 import com.example.goalin.service.AuthService
 import com.example.goalin.service.UserService
 import com.example.goalin.util.http.ApiResponseException
-import com.example.goalin.views.ButtonView
+import com.example.goalin.ui.ButtonView
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope

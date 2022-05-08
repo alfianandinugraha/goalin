@@ -8,31 +8,31 @@
     android:paddingTop="37dp"
     android:paddingHorizontal="20dp"
     android:orientation="vertical">
-    <com.example.goalin.views.BackView
+    <com.example.goalin.ui.BackView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
         android:text="Tambah Goal mu"
         style="@style/style_sub_title"/>
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nama Barang"
         android:id="@+id/name"
         android:layout_marginBottom="30dp" />
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Harga Barang"
         android:inputType="numberDecimal"
         android:id="@+id/total"
         android:layout_marginBottom="30dp"/>
-    <com.example.goalin.views.SelectView
+    <com.example.goalin.ui.SelectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/category_select"
         android:hint="Pilih Kategori" />
-    <com.example.goalin.views.ButtonView
+    <com.example.goalin.ui.ButtonView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tambah Goal"

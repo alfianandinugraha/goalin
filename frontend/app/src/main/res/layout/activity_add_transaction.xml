@@ -8,37 +8,37 @@
     android:paddingTop="37dp"
     android:paddingHorizontal="20dp"
     android:orientation="vertical">
-    <com.example.goalin.views.BackView
+    <com.example.goalin.ui.BackView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
         android:text="Tambah Transaksi"
         style="@style/style_sub_title"/>
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nama Barang"
         android:text="Laptop"
         android:layout_marginBottom="20dp"
         android:enabled="false" />
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Jumlah Uang"
         android:inputType="numberDecimal"
         android:layout_marginBottom="20dp"/>
-    <com.example.goalin.views.SelectView
+    <com.example.goalin.ui.SelectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:hint="Pilih Dompet"
         android:id="@+id/wallet_select_view"/>
-    <com.example.goalin.views.DatePickerView
+    <com.example.goalin.ui.DatePickerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Tanggal"
         android:id="@+id/date_picker" />
-    <com.example.goalin.views.ButtonView
+    <com.example.goalin.ui.ButtonView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tambah Transaksi"

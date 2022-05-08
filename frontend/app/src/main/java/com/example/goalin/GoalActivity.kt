@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.goalin.model.Goal
 import com.example.goalin.util.format.Currency
-import com.example.goalin.views.ButtonView
+import com.example.goalin.ui.ButtonView
 import com.google.gson.Gson
 import kotlin.math.abs
 

@@ -8,7 +8,7 @@
     android:paddingHorizontal="20dp"
     android:orientation="vertical"
     tools:context=".ProfileActivity">
-    <com.example.goalin.views.BackView
+    <com.example.goalin.ui.BackView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <LinearLayout
@@ -23,19 +23,19 @@
             android:layout_height="60dp"
             android:src="@drawable/ic_baseline_person_white"/>
     </LinearLayout>
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Alfian Andi Nugraha"
         android:id="@+id/full_name_edit_text"
         android:layout_marginBottom="30dp"/>
-    <com.example.goalin.views.EditTextView
+    <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/email_edit_text"
         android:text="me@alfianandi.dev"
         android:layout_marginBottom="40dp"/>
-    <com.example.goalin.views.ButtonView
+    <com.example.goalin.ui.ButtonView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Simpan profile"

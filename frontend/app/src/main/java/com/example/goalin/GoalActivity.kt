@@ -45,6 +45,7 @@ class GoalActivity : AppCompatActivity() {
         }
 
         addTransactionButton.setOnClickListener {
+            addTransactionActivity.putExtra("goal", goalJSON)
             startActivity(addTransactionActivity)
         }
 

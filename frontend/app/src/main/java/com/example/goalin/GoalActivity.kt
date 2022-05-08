@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.goalin.model.Goal
 import com.example.goalin.util.format.Currency
 import com.example.goalin.ui.ButtonView
@@ -14,6 +15,15 @@ import com.google.gson.Gson
 import kotlin.math.abs
 
 class GoalActivity : AppCompatActivity() {
+    private lateinit var nameTextView: TextView
+    private lateinit var amountTextView: TextView
+    private lateinit var totalTextView: TextView
+    private lateinit var minusTextView: TextView
+    private lateinit var rangeThumbView: View
+
+    private var amount: Float = 0F
+    private var total: Float = 0F
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goal)
@@ -22,18 +32,17 @@ class GoalActivity : AppCompatActivity() {
 
         val goal = Gson().fromJson(goalJSON, Goal::class.java)
 
-        val amountText = Currency.rupiah(goal.amount)
-        val totalText = Currency.rupiah(goal.total)
-        val minusText = "Tersisa ${Currency.rupiah(abs(goal.amount - goal.total))} lagi"
+        amount = goal.amount
+        total = goal.total
         val notesText = goal.notes
 
-        val nameTextView = findViewById<TextView>(R.id.name)
-        val amountTextView = findViewById<TextView>(R.id.amount)
-        val totalTextView = findViewById<TextView>(R.id.total)
-        val minusTextView = findViewById<TextView>(R.id.minus)
-        val notesTextView = findViewById<TextView>(R.id.notes)
+        nameTextView = findViewById(R.id.name)
+        amountTextView = findViewById(R.id.amount)
+        totalTextView = findViewById(R.id.total)
+        minusTextView = findViewById(R.id.minus)
+        rangeThumbView = findViewById(R.id.range_thumb)
 
-        val rangeThumbView = findViewById<View>(R.id.range_thumb)
+        val notesTextView = findViewById<TextView>(R.id.notes)
 
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
         val addTransactionButton = findViewById<Button>(R.id.add_transaction)
@@ -44,21 +53,40 @@ class GoalActivity : AppCompatActivity() {
             startActivity(editGoalActivity)
         }
 
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            when(it.resultCode) {
+                AddTransactionActivity.SUCCESS -> {
+                    val input = it.data?.getStringExtra("input")
+                    val goal = Gson().fromJson(input, Goal::class.java)
+
+                    amount += goal.amount
+                    total += goal.total
+                    updateNominal()
+                }
+            }
+        }
+
         addTransactionButton.setOnClickListener {
             addTransactionActivity.putExtra("goal", goalJSON)
-            startActivity(addTransactionActivity)
+            startForResult.launch(addTransactionActivity)
         }
 
         nameTextView.text = goal.name
+        notesTextView.text = notesText ?: "-"
+        updateNominal()
+    }
+
+    private fun updateNominal() {
+        val amountText = Currency.rupiah(amount)
+        val totalText = Currency.rupiah(total)
+        val minusText = "Tersisa ${Currency.rupiah(abs(amount - total))} lagi"
+
         amountTextView.text = amountText
         totalTextView.text = totalText
         minusTextView.text = minusText
-        notesTextView.text = notesText ?: "-"
 
         val layoutParams = rangeThumbView.layoutParams as LinearLayout.LayoutParams
-
-        layoutParams.weight = (goal.amount / goal.total) * 100
-
+        layoutParams.weight = (amount / total) * 100
         rangeThumbView.layoutParams = layoutParams
     }
 }

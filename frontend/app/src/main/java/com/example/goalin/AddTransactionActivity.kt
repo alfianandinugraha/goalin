@@ -1,5 +1,6 @@
 package com.example.goalin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -20,6 +21,10 @@ import kotlinx.coroutines.withContext
 
 class AddTransactionActivity : AppCompatActivity() {
     private val scope = CoroutineScope(CoroutineName("AddTransactionScope") + Dispatchers.IO)
+
+    companion object {
+        const val SUCCESS = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +87,9 @@ class AddTransactionActivity : AppCompatActivity() {
                         Toast
                             .makeText(this@AddTransactionActivity, "Berhasil menambahkan Transaksi", Toast.LENGTH_SHORT)
                             .show()
+                        val intent = Intent(this@AddTransactionActivity, GoalActivity::class.java)
+                        intent.putExtra("input", Gson().toJson(body))
+                        setResult(SUCCESS, intent)
                         finish()
                     }
                 } catch (err: ApiResponseException) {

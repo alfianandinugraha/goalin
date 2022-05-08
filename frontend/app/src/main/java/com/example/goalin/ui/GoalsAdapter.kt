@@ -15,8 +15,9 @@ import com.example.goalin.util.format.Currency
 import com.google.gson.Gson
 
 class GoalsAdapter(
-    private val context: Context, private val goals: List<Goal>
+    private val context: Context
 ): RecyclerView.Adapter<GoalsAdapter.Holder>() {
+    lateinit var goals: MutableList<Goal>
 
     class Holder(view: View): RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.name)

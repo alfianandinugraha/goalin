@@ -3,7 +3,6 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,13 +47,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         val goalService = GoalService(this)
+        val goalsAdapter = GoalsAdapter(this)
 
         startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when(it.resultCode) {
                 GoalActivity.CHANGED -> {
                     val value = it.data?.getStringExtra("goal")
+
                     val goal = Gson().fromJson(value, Goal::class.java)
-                    Log.d("Event", value.toString())
+                    val index = goalsAdapter.goals
+                        .withIndex()
+                        .filter { it.value.id == goal.id }
+                        .map { it.index }[0]
+
+                    goalsAdapter.goals[index] = goal
+                    goalsAdapter.notifyItemChanged(index)
                 }
             }
         }
@@ -65,7 +72,8 @@ class MainActivity : AppCompatActivity() {
                 val goals = response.payload
                 withContext(Dispatchers.Main) {
                     goalsRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-                    goalsRecyclerView.adapter = GoalsAdapter(this@MainActivity, goals)
+                    goalsAdapter.goals = goals.toMutableList()
+                    goalsRecyclerView.adapter = goalsAdapter
                 }
             } catch (err: ApiResponseException) {
 

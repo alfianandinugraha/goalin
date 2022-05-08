@@ -3,12 +3,14 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.goalin.model.Goal
+import com.example.goalin.ui.BackView
 import com.example.goalin.util.format.Currency
 import com.example.goalin.ui.ButtonView
 import com.google.gson.Gson
@@ -23,6 +25,10 @@ class GoalActivity : AppCompatActivity() {
 
     private var amount: Float = 0F
     private var total: Float = 0F
+
+    companion object {
+        const val CHANGED = 1
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,7 @@ class GoalActivity : AppCompatActivity() {
         minusTextView = findViewById(R.id.minus)
         rangeThumbView = findViewById(R.id.range_thumb)
 
+        val backView = findViewById<BackView>(R.id.back_view)
         val notesTextView = findViewById<TextView>(R.id.notes)
 
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
@@ -49,8 +56,25 @@ class GoalActivity : AppCompatActivity() {
         val editGoalActivity = Intent(this, EditGoalActivity::class.java)
         val addTransactionActivity = Intent(this, AddTransactionActivity::class.java)
 
+        val mainActivityIntent = Intent(this, MainActivity::class.java)
+
         editButton.setOnClickListener {
             startActivity(editGoalActivity)
+        }
+
+        backView.setOnClickListener {
+            val newGoal = goal.copy(
+                amount = amount,
+                total = total
+            )
+            val isChanged = !goal.equals(newGoal)
+
+            if (isChanged) {
+                mainActivityIntent.putExtra("goal", Gson().toJson(newGoal))
+                setResult(CHANGED, mainActivityIntent)
+            }
+
+            finish()
         }
 
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

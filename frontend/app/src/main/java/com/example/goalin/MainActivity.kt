@@ -63,6 +63,13 @@ class MainActivity : AppCompatActivity() {
                     goalsAdapter.goals[index] = goal
                     goalsAdapter.notifyItemChanged(index)
                 }
+                AddGoalActivity.SUCCESS -> {
+                    val value = it.data?.getStringExtra("goal")
+                    val goal = Gson().fromJson(value, Goal::class.java)
+
+                    goalsAdapter.goals.add(0, goal)
+                    goalsAdapter.notifyItemChanged(0)
+                }
             }
         }
 

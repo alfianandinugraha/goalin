@@ -1,5 +1,6 @@
 package com.example.goalin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
@@ -9,6 +10,7 @@ import com.example.goalin.service.GoalService
 import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.SelectView
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +19,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AddGoalActivity : AppCompatActivity() {
+    companion object {
+        const val SUCCESS = 123
+    }
+
     private val scope = CoroutineScope(CoroutineName("AddGoalScope") + Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,11 +78,16 @@ class AddGoalActivity : AppCompatActivity() {
 
             scope.launch {
                 try {
-                    goalService.store(body)
+                    val response = goalService.store(body)
+                    val goal = response.payload
                     withContext(Dispatchers.Main) {
                         Toast
                             .makeText(this@AddGoalActivity, "Berhasil menambahkan goal!", Toast.LENGTH_SHORT)
                             .show()
+
+                        val intent = Intent(this@AddGoalActivity, MainActivity::class.java)
+                        intent.putExtra("goal", Gson().toJson(goal))
+                        setResult(SUCCESS, intent)
                         finish()
                     }
                 } catch (err: ApiResponseException) {

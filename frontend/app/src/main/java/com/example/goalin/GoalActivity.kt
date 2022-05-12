@@ -22,6 +22,7 @@ class GoalActivity : AppCompatActivity() {
     private lateinit var totalTextView: TextView
     private lateinit var minusTextView: TextView
     private lateinit var rangeThumbView: View
+    private lateinit var addTransactionButton: Button
 
     private var amount: Float = 0F
     private var total: Float = 0F
@@ -51,8 +52,8 @@ class GoalActivity : AppCompatActivity() {
         val backView = findViewById<BackView>(R.id.back_view)
         val notesTextView = findViewById<TextView>(R.id.notes)
 
+        addTransactionButton = findViewById<Button>(R.id.add_transaction)
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
-        val addTransactionButton = findViewById<Button>(R.id.add_transaction)
         val editGoalActivity = Intent(this, EditGoalActivity::class.java)
         val addTransactionActivity = Intent(this, AddTransactionActivity::class.java)
 
@@ -86,6 +87,7 @@ class GoalActivity : AppCompatActivity() {
                     amount += goal.amount
                     total += goal.total
                     updateNominal()
+                    updateEnabledButton()
                 }
             }
         }
@@ -98,6 +100,7 @@ class GoalActivity : AppCompatActivity() {
         nameTextView.text = goal.name
         notesTextView.text = notesText ?: "-"
         updateNominal()
+        updateEnabledButton()
     }
 
     private fun updateNominal() {
@@ -112,5 +115,9 @@ class GoalActivity : AppCompatActivity() {
         val layoutParams = rangeThumbView.layoutParams as LinearLayout.LayoutParams
         layoutParams.weight = (amount / total) * 100
         rangeThumbView.layoutParams = layoutParams
+    }
+
+    private fun updateEnabledButton() {
+        addTransactionButton.isEnabled = amount < total
     }
 }

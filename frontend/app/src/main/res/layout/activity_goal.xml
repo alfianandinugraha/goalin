@@ -29,6 +29,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:id="@+id/delete_goal_btn"
                 android:src="@drawable/ic_baseline_delete_red" />
         </LinearLayout>
         <RelativeLayout

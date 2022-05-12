@@ -1,19 +1,30 @@
 package com.example.goalin
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import com.example.goalin.model.Goal
+import com.example.goalin.service.GoalService
 import com.example.goalin.ui.BackView
 import com.example.goalin.util.format.Currency
 import com.example.goalin.ui.ButtonView
+import com.example.goalin.util.http.ApiResponseException
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 class GoalActivity : AppCompatActivity() {
@@ -26,9 +37,11 @@ class GoalActivity : AppCompatActivity() {
 
     private var amount: Float = 0F
     private var total: Float = 0F
+    private val scope = CoroutineScope(CoroutineName("GoalScope") + Dispatchers.IO)
 
     companion object {
         const val CHANGED = 1
+        const val DELETED = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,14 +66,58 @@ class GoalActivity : AppCompatActivity() {
         val notesTextView = findViewById<TextView>(R.id.notes)
 
         addTransactionButton = findViewById<Button>(R.id.add_transaction)
+        val deleteGoalButton = findViewById<ImageView>(R.id.delete_goal_btn)
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
         val editGoalActivity = Intent(this, EditGoalActivity::class.java)
         val addTransactionActivity = Intent(this, AddTransactionActivity::class.java)
 
         val mainActivityIntent = Intent(this, MainActivity::class.java)
 
+        val goalService = GoalService(this)
+
         editButton.setOnClickListener {
             startActivity(editGoalActivity)
+        }
+
+        deleteGoalButton.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Hapus Goal")
+                .setMessage("Apakah kamu yakin menghapus goal?")
+                .setPositiveButton("Hapus", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, id: Int) {
+                        scope.launch {
+                            try {
+                                goalService.delete(goal.id)
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        this@GoalActivity,
+                                        "Goal berhasil dihapus",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    mainActivityIntent.putExtra("goal", Gson().toJson(goal))
+                                    setResult(DELETED, mainActivityIntent)
+                                    finish()
+                                }
+                            } catch (err: ApiResponseException) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        this@GoalActivity,
+                                        err.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+
+                })
+                .setNegativeButton("Batal", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, id: Int) {
+
+                    }
+
+                })
+                .show()
         }
 
         backView.setOnClickListener {

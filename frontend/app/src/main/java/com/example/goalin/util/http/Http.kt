@@ -7,7 +7,7 @@ class Http {
     companion object {
         val builder: Retrofit.Builder = Retrofit
             .Builder()
-            .baseUrl("http://192.168.43.78:3000")
+            .baseUrl("https://goalin.vercel.app")
             .addConverterFactory(GsonConverterFactory.create())
     }
 }

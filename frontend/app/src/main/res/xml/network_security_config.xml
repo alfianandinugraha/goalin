@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <!-- Local backend server -->
         <domain includeSubdomains="true">192.168.43.78</domain>
+        <domain includeSubdomains="true">https://goalin.vercel.app</domain>
     </domain-config>
 </network-security-config>

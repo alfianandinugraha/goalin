@@ -63,6 +63,25 @@ class MainActivity : AppCompatActivity() {
                     goalsAdapter.goals[index] = goal
                     goalsAdapter.notifyItemChanged(index)
                 }
+                GoalActivity.DELETED -> {
+                    val value = it.data?.getStringExtra("goal")
+
+                    val goal = Gson().fromJson(value, Goal::class.java)
+                    val index = goalsAdapter.goals
+                        .withIndex()
+                        .filter { it.value.id == goal.id }
+                        .map { it.index }[0]
+
+                    goalsAdapter.goals.removeAt(index)
+                    goalsAdapter.notifyItemRemoved(index)
+                }
+                AddGoalActivity.SUCCESS -> {
+                    val value = it.data?.getStringExtra("goal")
+                    val goal = Gson().fromJson(value, Goal::class.java)
+
+                    goalsAdapter.goals.add(0, goal)
+                    goalsAdapter.notifyItemChanged(0)
+                }
             }
         }
 

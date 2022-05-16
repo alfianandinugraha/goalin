@@ -37,4 +37,13 @@ class GoalService(val context: Context) {
 
         return@coroutineScope response.body()!!
     }
+
+    suspend fun delete(goalId: String) = coroutineScope {
+        val responseDeferred = async { repository.delete(goalId) }
+        val response = responseDeferred.await()
+
+        if (!response.isSuccessful) throw ApiResponseException(response)
+
+        return@coroutineScope response.body()!!
+    }
 }

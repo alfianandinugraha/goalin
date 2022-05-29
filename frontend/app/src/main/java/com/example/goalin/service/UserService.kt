@@ -1,26 +1,55 @@
 package com.example.goalin.service
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.goalin.model.ResponseStatus
+import com.example.goalin.model.User
 import com.example.goalin.repository.UserRepository
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.util.http.AuthInterceptor
 import com.example.goalin.util.http.Http
+import com.example.goalin.util.parser.ParseResponseError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
-class UserService(val context: Context) {
+class UserService(application: Application): AndroidViewModel(application) {
     private val repository = Http
         .builder
-        .client(AuthInterceptor.build(context))
+        .client(AuthInterceptor.build(application))
         .build()
         .create(UserRepository::class.java)
 
-    suspend fun get() = coroutineScope {
+    private val _getDetailFlow = MutableSharedFlow<ResponseStatus<User>>(replay = 5)
+
+    val getDetailFlow = _getDetailFlow.asSharedFlow()
+
+    suspend fun getDetail() = viewModelScope.launch(Dispatchers.IO) {
+        _getDetailFlow.emit(ResponseStatus.Loading())
+
         val responseDeferred = async { repository.get() }
         val response = responseDeferred.await()
 
-        if (!response.isSuccessful) throw ApiResponseException(response)
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
 
-        return@coroutineScope response.body()!!
+            _getDetailFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _getDetailFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Berhasil mendapatkan profile"
+            )
+        )
     }
 }

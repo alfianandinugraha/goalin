@@ -3,9 +3,11 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.TokenService
 import com.example.goalin.service.UserService
-import com.example.goalin.util.http.ApiResponseException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,9 +27,9 @@ class SplashActivity : AppCompatActivity() {
         val tokenService = TokenService(this)
         val token = tokenService.get()
 
-        val userService = UserService(this)
+        val userService = ViewModelProvider(this).get(UserService::class.java)
 
-        scope.launch {
+        lifecycleScope.launch {
             delay(1000)
 
             if (token == null) {
@@ -35,11 +37,20 @@ class SplashActivity : AppCompatActivity() {
                 return@launch
             }
 
-            try {
-                userService.get()
-                startActivity(mainActivity)
-            } catch (err: ApiResponseException) {
-                startActivity(loginActivity)
+            userService.getDetail()
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            userService.getDetailFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Success -> {
+                        startActivity(mainActivity)
+                    }
+                    is ResponseStatus.Error -> {
+                        startActivity(loginActivity)
+                    }
+                }
             }
         }
     }

@@ -5,20 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.AuthService
 import com.example.goalin.service.UserService
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.ButtonView
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ProfileActivity : AppCompatActivity() {
-    private val scope = CoroutineScope(CoroutineName("ProfileScope") + Dispatchers.IO)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -32,8 +29,8 @@ class ProfileActivity : AppCompatActivity() {
         val loginActivity = Intent(baseContext, LoginActivity::class.java)
         val editProfileActivity = Intent(baseContext, EditProfileActivity::class.java)
 
-        val authService = AuthService(this)
-        val userService = UserService(this)
+        val authService = AuthService(application)
+        val userService = ViewModelProvider(this).get(UserService::class.java)
 
         logoutButton.setOnClickListener {
             startActivity(loginActivity)
@@ -44,25 +41,29 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(editProfileActivity)
         }
 
-        scope.launch {
-            try {
-                val response = userService.get()
-                val user = response.payload
-                withContext(Dispatchers.Main) {
-                    fullNameTextView.text = user.fullName
-                    emailTextView.text = user.email
+        lifecycleScope.launch(Dispatchers.IO) {
+            userService.getDetail()
+        }
 
-                    editProfileActivity.putExtra("user", Gson().toJson(user))
-                    toEditProfileButton.setOnClickListener {
-                        startActivity(editProfileActivity)
+        lifecycleScope.launch(Dispatchers.Main) {
+            userService.getDetailFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Success -> {
+                        fullNameTextView.text = it.payload.fullName
+                        emailTextView.text = it.payload.email
+
+                        editProfileActivity.putExtra("user", Gson().toJson(it.payload))
+                        toEditProfileButton.setOnClickListener {
+                            startActivity(editProfileActivity)
+                        }
                     }
-                }
-            } catch (err: ApiResponseException) {
-                withContext(Dispatchers.Main) {
-                    Toast
-                        .makeText(this@ProfileActivity, err.message, Toast.LENGTH_SHORT)
-                        .show()
-                    finish()
+                    is ResponseStatus.Error -> {
+                        Toast
+                            .makeText(this@ProfileActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                        finish()
+                    }
                 }
             }
         }

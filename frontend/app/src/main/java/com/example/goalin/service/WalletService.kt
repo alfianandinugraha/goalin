@@ -1,24 +1,53 @@
 package com.example.goalin.service
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.goalin.model.ResponseStatus
+import com.example.goalin.model.Wallet
 import com.example.goalin.repository.WalletRepository
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.util.http.Http
+import com.example.goalin.util.parser.ParseResponseError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
-class WalletService(val context: Context) {
+class WalletService(application: Application) : AndroidViewModel(application) {
     private val repository: WalletRepository = Http
         .builder
         .build()
         .create(WalletRepository::class.java)
 
-    suspend fun getAll() = coroutineScope {
+    private val _getAllFlow = MutableSharedFlow<ResponseStatus<List<Wallet>>>(replay = 5)
+
+    val getAllFlow = _getAllFlow.asSharedFlow()
+
+    suspend fun getAll() = viewModelScope.launch(Dispatchers.IO) {
+        _getAllFlow.emit(ResponseStatus.Loading())
+
         val responseDeferred = async { repository.getAll() }
         val response = responseDeferred.await()
 
-        if (!response.isSuccessful) throw ApiResponseException(response)
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
 
-        return@coroutineScope response.body()!!
+            _getAllFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _getAllFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Berhasil mendapatkan wallet"
+            )
+        )
     }
 }

@@ -4,24 +4,21 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.goalin.model.Goal
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.TransactionService
 import com.example.goalin.service.WalletService
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.DatePickerView
 import com.example.goalin.ui.EditTextView
 import com.example.goalin.ui.SelectView
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AddTransactionActivity : AppCompatActivity() {
-    private val scope = CoroutineScope(CoroutineName("AddTransactionScope") + Dispatchers.IO)
-
     companion object {
         const val SUCCESS = 1
     }
@@ -39,26 +36,13 @@ class AddTransactionActivity : AppCompatActivity() {
         val amountEditTextView = findViewById<EditTextView>(R.id.amount_edit_text_view)
         val datePicker = findViewById<DatePickerView>(R.id.date_picker)
 
-        val transactionService = TransactionService(this)
-        val walletService = WalletService(this)
+        val transactionService = ViewModelProvider(this).get(TransactionService::class.java)
+        val walletService = ViewModelProvider(this).get(WalletService::class.java)
 
         nameEditTextView.setText(goal.name)
 
-        scope.launch {
-            try {
-                val response = walletService.getAll()
-                withContext(Dispatchers.Main) {
-                    walletSelectView.options = response.payload.map {
-                        SelectView.Option(it.name, it.id)
-                    }
-                }
-            } catch (err: ApiResponseException) {
-                withContext(Dispatchers.Main) {
-                    Toast
-                        .makeText(this@AddTransactionActivity, err.response().message, Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
+        lifecycleScope.launch {
+            walletService.getAll()
         }
 
         saveButton.setOnClickListener {
@@ -73,29 +57,57 @@ class AddTransactionActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            scope.launch {
+            lifecycleScope.launch {
                 val body = TransactionService.CreateTransactionBodyRequest(
                     amount = amount,
                     walletId = walletId,
                     createdAt = createdAt,
                     goalId = goal.id
                 )
-                try {
-                    val response = transactionService.store(body)
+                transactionService.store(body)
+            }
+        }
 
-                    withContext(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            walletService.getAllFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {
+
+                    }
+                    is ResponseStatus.Success -> {
+                        saveButton.isEnabled = true
+                        walletSelectView.options = it.payload.map { wallet ->
+                            SelectView.Option(wallet.name, wallet.id)
+                        }
+                    }
+                    is ResponseStatus.Error -> {
                         Toast
-                            .makeText(this@AddTransactionActivity, "Berhasil menambahkan Transaksi", Toast.LENGTH_SHORT)
+                            .makeText(this@AddTransactionActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                        finish()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            transactionService.getAllFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {
+                        saveButton.isEnabled = false
+                    }
+                    is ResponseStatus.Success -> {
+                        Toast
+                            .makeText(this@AddTransactionActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
                         val intent = Intent(this@AddTransactionActivity, GoalActivity::class.java)
-                        intent.putExtra("input", Gson().toJson(body))
                         setResult(SUCCESS, intent)
                         finish()
                     }
-                } catch (err: ApiResponseException) {
-                    withContext(Dispatchers.Main) {
+                    is ResponseStatus.Error -> {
+                        saveButton.isEnabled = true
                         Toast
-                            .makeText(this@AddTransactionActivity, err.response().message, Toast.LENGTH_SHORT)
+                            .makeText(this@AddTransactionActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
                     }
                 }

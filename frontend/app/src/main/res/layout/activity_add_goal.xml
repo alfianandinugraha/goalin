@@ -33,6 +33,7 @@
         android:id="@+id/category_select"
         android:hint="Pilih Kategori" />
     <com.example.goalin.ui.ButtonView
+        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Tambah Goal"

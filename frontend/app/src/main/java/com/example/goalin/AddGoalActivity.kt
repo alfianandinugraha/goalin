@@ -36,7 +36,7 @@ class AddGoalActivity : AppCompatActivity() {
         val addButton = findViewById<ButtonView>(R.id.add_btn)
 
         val categoryService = CategoryService(this)
-        val goalService = GoalService(this)
+        val goalService = GoalService(application)
 
         scope.launch {
             try {

@@ -73,7 +73,7 @@ class GoalActivity : AppCompatActivity() {
 
         val mainActivityIntent = Intent(this, MainActivity::class.java)
 
-        val goalService = GoalService(this)
+        val goalService = GoalService(application)
 
         editButton.setOnClickListener {
             startActivity(editGoalActivity)

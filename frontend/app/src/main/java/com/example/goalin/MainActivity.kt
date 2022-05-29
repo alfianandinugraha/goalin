@@ -4,28 +4,23 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.goalin.model.Goal
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.GoalService
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.GoalsAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var startActivityForResult:
             ActivityResultLauncher<Intent>
-
-    private val scope = CoroutineScope(CoroutineName("MainScope") + Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,74 +30,52 @@ class MainActivity : AppCompatActivity() {
         val toProfileButton = findViewById<LinearLayout>(R.id.to_profile_btn)
         val goalsRecyclerView = findViewById<RecyclerView>(R.id.goals)
 
-        val addGoalActivity = Intent(this, AddGoalActivity::class.java)
-        val profileActivity = Intent(this, ProfileActivity::class.java)
-
         toAddGoalButton.setOnClickListener {
-            startActivity(addGoalActivity)
+            startActivity(
+                Intent(this, AddGoalActivity::class.java)
+            )
         }
 
         toProfileButton.setOnClickListener {
-            startActivity(profileActivity)
+            startActivity(
+                Intent(this, ProfileActivity::class.java)
+            )
         }
 
-        val goalService = GoalService(this)
+        val goalService = ViewModelProvider(this).get(GoalService::class.java)
         val goalsAdapter = GoalsAdapter(this)
 
         startActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when(it.resultCode) {
-                GoalActivity.CHANGED -> {
-                    val value = it.data?.getStringExtra("goal")
-
-                    val goal = Gson().fromJson(value, Goal::class.java)
-                    val index = goalsAdapter.goals
-                        .withIndex()
-                        .filter { it.value.id == goal.id }
-                        .map { it.index }[0]
-
-                    goalsAdapter.goals[index] = goal
-                    goalsAdapter.notifyItemChanged(index)
-                }
-                GoalActivity.DELETED -> {
-                    val value = it.data?.getStringExtra("goal")
-
-                    val goal = Gson().fromJson(value, Goal::class.java)
-                    val index = goalsAdapter.goals
-                        .withIndex()
-                        .filter { it.value.id == goal.id }
-                        .map { it.index }[0]
-
-                    goalsAdapter.goals.removeAt(index)
-                    goalsAdapter.notifyItemRemoved(index)
-                }
-                AddGoalActivity.SUCCESS -> {
-                    val value = it.data?.getStringExtra("goal")
-                    val goal = Gson().fromJson(value, Goal::class.java)
-
-                    goalsAdapter.goals.add(0, goal)
-                    goalsAdapter.notifyItemChanged(0)
+                GoalActivity.CHANGED, GoalActivity.DELETED, AddGoalActivity.SUCCESS -> {
+                    lifecycleScope.launch {
+                        goalService.getAll()
+                    }
                 }
             }
         }
 
-        scope.launch {
-            try {
-                val response = goalService.getAll()
-                val goals = response.payload
-                withContext(Dispatchers.Main) {
-                    goalsRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-                    goalsAdapter.goals = goals.toMutableList()
-                    goalsRecyclerView.adapter = goalsAdapter
-                }
-            } catch (err: ApiResponseException) {
+        lifecycleScope.launch {
+            goalService.getAll()
+        }
 
+        lifecycleScope.launch(Dispatchers.Main) {
+            goalService.goalsFlow.collect {
+                when (it) {
+                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Success -> {
+                        goalsRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                        goalsAdapter.goals = it.payload.toMutableList()
+                        goalsRecyclerView.adapter = goalsAdapter
+                    }
+                    is ResponseStatus.Error -> {
+                        Toast
+                            .makeText(this@MainActivity, "Gagal mendapatkan list goal", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
             }
         }
-    }
-
-    override fun onDestroy() {
-        scope.cancel()
-        super.onDestroy()
     }
 
     override fun startActivity(intent: Intent?) {

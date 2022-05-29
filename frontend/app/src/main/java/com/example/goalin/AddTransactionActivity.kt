@@ -91,7 +91,7 @@ class AddTransactionActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            transactionService.getAllFlow.collect {
+            transactionService.storeFlow.collect {
                 when(it) {
                     is ResponseStatus.Loading -> {
                         saveButton.isEnabled = false

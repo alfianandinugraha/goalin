@@ -1,21 +1,16 @@
 package com.example.goalin.service
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.goalin.model.ResponseStatus
 import com.example.goalin.model.Transaction
-import com.example.goalin.repository.GoalRepository
 import com.example.goalin.repository.TransactionRepository
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.util.http.AuthInterceptor
 import com.example.goalin.util.http.Http
 import com.example.goalin.util.parser.ParseResponseError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -34,12 +29,12 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
         .build()
         .create(TransactionRepository::class.java)
 
-    private val _getAllFlow = MutableSharedFlow<ResponseStatus<Transaction>>(replay = 5)
+    private val _storeFlow = MutableSharedFlow<ResponseStatus<Transaction>>(replay = 5)
 
-    val getAllFlow = _getAllFlow.asSharedFlow()
+    val storeFlow = _storeFlow.asSharedFlow()
 
     suspend fun store(body: CreateTransactionBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
-        _getAllFlow.emit(ResponseStatus.Loading())
+        _storeFlow.emit(ResponseStatus.Loading())
 
         val responseDeferred = async { repository.store(body.goalId, body) }
         val response = responseDeferred.await()
@@ -47,7 +42,7 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
         if (!response.isSuccessful) {
             val err = ParseResponseError(response)
 
-            _getAllFlow.emit(
+            _storeFlow.emit(
                 ResponseStatus.Error(
                     message = err.message,
                     code = response.code(),
@@ -56,7 +51,7 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
             return@launch
         }
 
-        _getAllFlow.emit(
+        _storeFlow.emit(
             ResponseStatus.Success(
                 payload = response.body()?.payload!!,
                 code = response.code(),

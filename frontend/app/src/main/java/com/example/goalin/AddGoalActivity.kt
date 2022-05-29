@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -10,22 +11,15 @@ import androidx.lifecycle.lifecycleScope
 import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.CategoryService
 import com.example.goalin.service.GoalService
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.SelectView
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AddGoalActivity : AppCompatActivity() {
     companion object {
         const val SUCCESS = 123
     }
-
-    private val scope = CoroutineScope(CoroutineName("AddGoalScope") + Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,27 +31,11 @@ class AddGoalActivity : AppCompatActivity() {
 
         val addButton = findViewById<ButtonView>(R.id.add_btn)
 
-        val categoryService = CategoryService(this)
+        val categoryService = ViewModelProvider(this).get(CategoryService::class.java)
         val goalService = ViewModelProvider(this).get(GoalService::class.java)
 
-        scope.launch {
-            try {
-                val categories = categoryService.getAll()
-                withContext(Dispatchers.Main) {
-                    categorySelectView.options = categories.payload.map {
-                        SelectView.Option(it.name, it.id)
-                    }
-                }
-            } catch (err: ApiResponseException) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        this@AddGoalActivity,
-                        err.message ?: "Gagal memuat list kategori",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                }
-            }
+        lifecycleScope.launch {
+            categoryService.getAll()
         }
 
         addButton.setOnClickListener {
@@ -106,10 +84,27 @@ class AddGoalActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        scope.cancel()
+        lifecycleScope.launch(Dispatchers.Main) {
+            categoryService.categoriesFlow.collect {
+                when (it) {
+                    is ResponseStatus.Loading -> {
+                        addButton.isEnabled = false
+                    }
+                    is ResponseStatus.Success -> {
+                        addButton.isEnabled = true
+                        categorySelectView.options = it.payload.map { category ->
+                            SelectView.Option(category.name, category.id)
+                        }
+                    }
+                    is ResponseStatus.Error -> {
+                        Toast
+                            .makeText(this@AddGoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                        finish()
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,134 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".GoalActivity">
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="37dp"
-        android:paddingHorizontal="20dp"
-        android:orientation="vertical">
-        <com.example.goalin.ui.BackView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/back_view" />
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginBottom="20dp">
-            <TextView
-                android:text="Beli Laptop"
-                android:id="@+id/name"
-                style="@style/style_sub_title"
-                android:layout_marginBottom="0dp"
-                android:layout_weight="1"/>
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:id="@+id/delete_goal_btn"
-                android:src="@drawable/ic_baseline_delete_red" />
-        </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="@drawable/goal_range_track">
+            android:paddingTop="37dp"
+            android:paddingHorizontal="20dp"
+            android:orientation="vertical">
+            <com.example.goalin.ui.BackView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/back_view" />
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:weightSum="100">
-                <View
-                    android:id="@+id/range_thumb"
-                    android:layout_width="0dip"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_weight="85"
-                    android:background="@drawable/goal_range_thumb" />
-            </LinearLayout>
-        </RelativeLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-            <TextView
-                android:layout_width="10sp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Rp6.000.000"
-                android:id="@+id/amount"
-                android:textColor="@color/black"/>
+                android:gravity="center"
+                android:layout_marginBottom="20dp">
+                <TextView
+                    android:text="Beli Laptop"
+                    android:id="@+id/name"
+                    style="@style/style_sub_title"
+                    android:layout_marginBottom="0dp"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/delete_goal_btn"
+                    android:src="@drawable/ic_baseline_delete_red" />
+            </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/goal_range_track">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:weightSum="100">
+                    <View
+                        android:id="@+id/range_thumb"
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_weight="85"
+                        android:background="@drawable/goal_range_thumb" />
+                </LinearLayout>
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+                <TextView
+                    android:layout_width="10sp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Rp6.000.000"
+                    android:id="@+id/amount"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp12.000.000"
+                    android:id="@+id/total"
+                    android:textColor="@color/black" />
+            </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rp12.000.000"
-                android:id="@+id/total"
+                android:text="Tersisa Rp6.000.000 lagi"
+                android:textColor="#C6C6C6"
+                android:textSize="12dp"
+                android:id="@+id/minus"
+                android:layout_marginTop="6dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Catatan"
+                android:layout_marginTop="26dp"
                 android:textColor="@color/black" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:layout_marginTop="6dp"
+                android:id="@+id/notes"
+                android:textColor="@color/black" />
+            <com.example.goalin.ui.ButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tambah Setoran"
+                android:layout_marginTop="26dp"
+                android:id="@+id/add_transaction" />
+            <com.example.goalin.ui.ButtonView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/style_button_outline"
+                android:text="Edit Goal"
+                android:layout_marginTop="16dp"
+                android:id="@+id/edit_btn"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Setoran"
+                android:textColor="@color/black"
+                android:layout_marginTop="30dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/list_transactions"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/view_transaction" />
         </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tersisa Rp6.000.000 lagi"
-            android:textColor="#C6C6C6"
-            android:textSize="12dp"
-            android:id="@+id/minus"
-            android:layout_marginTop="6dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Catatan"
-            android:layout_marginTop="26dp"
-            android:textColor="@color/black" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-"
-            android:layout_marginTop="6dp"
-            android:id="@+id/notes"
-            android:textColor="@color/black" />
-        <com.example.goalin.ui.ButtonView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tambah Setoran"
-            android:layout_marginTop="26dp"
-            android:id="@+id/add_transaction" />
-        <com.example.goalin.ui.ButtonView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/style_button_outline"
-            android:text="Edit Goal"
-            android:layout_marginTop="16dp"
-            android:id="@+id/edit_btn"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Setoran"
-            android:textColor="@color/black"
-            android:layout_marginTop="30dp"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp" />
-        <com.example.goalin.ui.TransactionView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-        <com.example.goalin.ui.TransactionView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-        <com.example.goalin.ui.TransactionView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-        <com.example.goalin.ui.TransactionView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-        <com.example.goalin.ui.TransactionView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

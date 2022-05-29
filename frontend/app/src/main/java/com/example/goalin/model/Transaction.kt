@@ -5,5 +5,5 @@ data class Transaction (
     val goalId: String,
     val amount: Float,
     val wallet: Wallet,
-    val createdAt: Long
+    val createdAt: String
 )

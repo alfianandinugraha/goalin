@@ -1,6 +1,7 @@
 package com.example.goalin.service
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.goalin.model.ResponseStatus
@@ -30,8 +31,10 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
         .create(TransactionRepository::class.java)
 
     private val _storeFlow = MutableSharedFlow<ResponseStatus<Transaction>>(replay = 5)
+    private val _getAllFlow = MutableSharedFlow<ResponseStatus<List<Transaction>>>(replay = 5)
 
     val storeFlow = _storeFlow.asSharedFlow()
+    val getAllFlow = _getAllFlow.asSharedFlow()
 
     suspend fun store(body: CreateTransactionBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
         _storeFlow.emit(ResponseStatus.Loading())
@@ -56,6 +59,35 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
                 payload = response.body()?.payload!!,
                 code = response.code(),
                 message = "Berhasil menyimpan transaksi"
+            )
+        )
+    }
+
+    suspend fun getAll(goalId: String) = viewModelScope.launch(Dispatchers.IO) {
+        _getAllFlow.emit(ResponseStatus.Loading())
+
+        val responseDeferred = async { repository.getAll(goalId) }
+        val response = responseDeferred.await()
+
+        Log.d("Response", goalId)
+
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
+
+            _getAllFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _getAllFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Berhasil mendapatkan semua transaksi"
             )
         )
     }

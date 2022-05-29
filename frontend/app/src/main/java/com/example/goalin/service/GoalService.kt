@@ -34,16 +34,35 @@ class GoalService(application: Application): AndroidViewModel(application) {
         .create(GoalRepository::class.java)
 
     private val _goalsFlow = MutableSharedFlow<ResponseStatus<List<Goal>>>(replay = 5)
+    private val _storeFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
 
     val goalsFlow = _goalsFlow.asSharedFlow()
+    val storeFlow = _storeFlow.asSharedFlow()
 
-    suspend fun store(body: CreateGoalBodyRequest) = coroutineScope {
+    suspend fun store(body: CreateGoalBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
+        _storeFlow.emit(ResponseStatus.Loading())
         val responseDeferred = async { repository.store(body) }
         val response = responseDeferred.await()
 
-        if (!response.isSuccessful) throw ApiResponseException(response)
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
 
-        return@coroutineScope response.body()!!
+            _storeFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _storeFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Berhasil menyimpan Goal"
+            )
+        )
     }
 
     suspend fun getAll() = viewModelScope.launch(Dispatchers.IO) {

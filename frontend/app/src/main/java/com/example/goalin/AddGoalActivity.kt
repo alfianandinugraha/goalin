@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.CategoryService
 import com.example.goalin.service.GoalService
 import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.SelectView
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +38,7 @@ class AddGoalActivity : AppCompatActivity() {
         val addButton = findViewById<ButtonView>(R.id.add_btn)
 
         val categoryService = CategoryService(this)
-        val goalService = GoalService(application)
+        val goalService = ViewModelProvider(this).get(GoalService::class.java)
 
         scope.launch {
             try {
@@ -76,24 +78,29 @@ class AddGoalActivity : AppCompatActivity() {
                 total = total
             )
 
-            scope.launch {
-                try {
-                    val response = goalService.store(body)
-                    val goal = response.payload
-                    withContext(Dispatchers.Main) {
-                        Toast
-                            .makeText(this@AddGoalActivity, "Berhasil menambahkan goal!", Toast.LENGTH_SHORT)
-                            .show()
+            lifecycleScope.launch {
+                goalService.store(body)
+            }
+        }
 
+        lifecycleScope.launch(Dispatchers.Main) {
+            goalService.storeFlow.collect {
+                when (it) {
+                    is ResponseStatus.Loading -> {
+                        addButton.isEnabled = false
+                    }
+                    is ResponseStatus.Success -> {
+                        Toast
+                            .makeText(this@AddGoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
                         val intent = Intent(this@AddGoalActivity, MainActivity::class.java)
-                        intent.putExtra("goal", Gson().toJson(goal))
                         setResult(SUCCESS, intent)
                         finish()
                     }
-                } catch (err: ApiResponseException) {
-                    withContext(Dispatchers.Main) {
+                    is ResponseStatus.Error -> {
+                        addButton.isEnabled = true
                         Toast
-                            .makeText(this@AddGoalActivity, err.message, Toast.LENGTH_SHORT)
+                            .makeText(this@AddGoalActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
                     }
                 }

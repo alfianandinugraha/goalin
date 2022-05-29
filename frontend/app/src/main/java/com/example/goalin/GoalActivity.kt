@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -21,13 +20,9 @@ import com.example.goalin.service.GoalService
 import com.example.goalin.ui.BackView
 import com.example.goalin.util.format.Currency
 import com.example.goalin.ui.ButtonView
-import com.example.goalin.util.http.ApiResponseException
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 class GoalActivity : AppCompatActivity() {
@@ -117,13 +112,9 @@ class GoalActivity : AppCompatActivity() {
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when(it.resultCode) {
                 AddTransactionActivity.SUCCESS -> {
-                    val input = it.data?.getStringExtra("input")
-                    val goal = Gson().fromJson(input, Goal::class.java)
-
-                    amount += goal.amount
-                    total += goal.total
-                    updateNominal()
-                    updateEnabledButton()
+                    lifecycleScope.launch {
+                        goalService.getDetail(goal.id)
+                    }
                 }
             }
         }
@@ -157,6 +148,26 @@ class GoalActivity : AppCompatActivity() {
                         Toast
                             .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            goalService.getDetailFlow.collect {
+                when (it) {
+                    is ResponseStatus.Loading -> {
+                    }
+                    is ResponseStatus.Success -> {
+                        amount = it.payload.amount
+                        total = it.payload.total
+                        updateNominal()
+                    }
+                    is ResponseStatus.Error -> {
+                        Toast
+                            .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                        finish()
                     }
                 }
             }

@@ -32,10 +32,12 @@ class GoalService(application: Application): AndroidViewModel(application) {
     private val _goalsFlow = MutableSharedFlow<ResponseStatus<List<Goal>>>(replay = 5)
     private val _storeFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
     private val _deleteFlow = MutableSharedFlow<ResponseStatus<*>>(replay = 5)
+    private val _getDetailFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
 
     val goalsFlow = _goalsFlow.asSharedFlow()
     val storeFlow = _storeFlow.asSharedFlow()
     val deleteFlow = _deleteFlow.asSharedFlow()
+    val getDetailFlow = _getDetailFlow.asSharedFlow()
 
     suspend fun store(body: CreateGoalBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
         _storeFlow.emit(ResponseStatus.Loading())
@@ -113,6 +115,33 @@ class GoalService(application: Application): AndroidViewModel(application) {
                 payload = null,
                 code = response.code(),
                 message = "Berhasil menghapus Goal"
+            )
+        )
+    }
+
+    suspend fun getDetail(goalId: String) = viewModelScope.launch(Dispatchers.IO) {
+        _getDetailFlow.emit(ResponseStatus.Loading())
+
+        val responseDeferred = async { repository.getDetail(goalId) }
+        val response = responseDeferred.await()
+
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
+
+            _getDetailFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _getDetailFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Login berhasil"
             )
         )
     }

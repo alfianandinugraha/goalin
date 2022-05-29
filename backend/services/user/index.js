@@ -1,4 +1,12 @@
+import postgreErrors from "utils/constants/messages/postgre-errors";
 import supabase from "utils/vendors/supabase";
+
+/**
+ * @typedef UpdateUserBody
+ * @property {string} fullName
+ * @property {string} email
+ * @property {string} userId
+ */
 
 const getDetail = async (userId) => {
   const { data, error } = await supabase
@@ -24,8 +32,32 @@ const getDetail = async (userId) => {
   };
 };
 
+/**
+ * @param {UpdateUserBody} body
+ */
+const updateUser = async (body) => {
+  const { error } = await supabase
+    .from("users")
+    .update({
+      full_name: body.fullName,
+      email: body.email,
+    })
+    .match({
+      user_id: body.userId,
+    });
+
+  if (error) {
+    if (error.code === postgreErrors.UNIQUE_VIOLATION)
+      throw new Error("Email sudah digunakan");
+    throw new Error("Gagal memperbarui user");
+  }
+
+  return {};
+};
+
 const userServices = {
   get: getDetail,
+  update: updateUser,
 };
 
 export default userServices;

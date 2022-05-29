@@ -59,9 +59,32 @@ const removeTransaction = async (transactionId) => {
   return {};
 };
 
+const getAllTransactions = async (goalId) => {
+  const { data, error } = await supabase
+    .from("transactions")
+    .select(
+      `
+      *,
+      wallet:wallet_id(
+        wallet_id, name
+      )
+    `
+    )
+    .eq("goal_id", goalId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log(error);
+    throw new Error("Gagal mendapatkan list transaction");
+  }
+
+  return data;
+};
+
 const transactionServices = {
   create: createTransaction,
   remove: removeTransaction,
+  getAll: getAllTransactions,
 };
 
 export default transactionServices;

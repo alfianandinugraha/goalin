@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -14,12 +15,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.goalin.model.Goal
 import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.GoalService
+import com.example.goalin.service.TransactionService
 import com.example.goalin.ui.BackView
 import com.example.goalin.util.format.Currency
 import com.example.goalin.ui.ButtonView
+import com.example.goalin.ui.TransactionAdapter
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,12 +70,17 @@ class GoalActivity : AppCompatActivity() {
         addTransactionButton = findViewById<Button>(R.id.add_transaction)
         val deleteGoalButton = findViewById<ImageView>(R.id.delete_goal_btn)
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
+        val listTransactionRecyclerView = findViewById<RecyclerView>(R.id.list_transactions)
+
         val editGoalActivity = Intent(this, EditGoalActivity::class.java)
         val addTransactionActivity = Intent(this, AddTransactionActivity::class.java)
 
         val mainActivityIntent = Intent(this, MainActivity::class.java)
 
         val goalService = ViewModelProvider(this).get(GoalService::class.java)
+        val transactionService = ViewModelProvider(this).get(TransactionService::class.java)
+
+        val transactionAdapter = TransactionAdapter(this)
 
         editButton.setOnClickListener {
             startActivity(editGoalActivity)
@@ -112,8 +122,11 @@ class GoalActivity : AppCompatActivity() {
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when(it.resultCode) {
                 AddTransactionActivity.SUCCESS -> {
-                    lifecycleScope.launch {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         goalService.getDetail(goal.id)
+                    }
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        transactionService.getAll(goal.id)
                     }
                 }
             }
@@ -128,6 +141,10 @@ class GoalActivity : AppCompatActivity() {
         notesTextView.text = notesText ?: "-"
         updateNominal()
         updateEnabledButton()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            transactionService.getAll(goal.id)
+        }
 
         lifecycleScope.launch(Dispatchers.Main) {
             goalService.deleteFlow.collect {
@@ -162,6 +179,7 @@ class GoalActivity : AppCompatActivity() {
                         amount = it.payload.amount
                         total = it.payload.total
                         updateNominal()
+                        updateEnabledButton()
                     }
                     is ResponseStatus.Error -> {
                         Toast
@@ -169,6 +187,20 @@ class GoalActivity : AppCompatActivity() {
                             .show()
                         finish()
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            transactionService.getAllFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Success -> {
+                        listTransactionRecyclerView.layoutManager = LinearLayoutManager(this@GoalActivity)
+                        transactionAdapter.transactions = it.payload.toMutableList()
+                        listTransactionRecyclerView.adapter = transactionAdapter
+                    }
+                    is ResponseStatus.Error -> {}
                 }
             }
         }

@@ -3,19 +3,23 @@
     android:orientation="horizontal"
     android:gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/transaction_item"
+    android:layout_marginBottom="16dp">
     <LinearLayout
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+Rp2.000.000"
             android:textColor="@color/green_500"
             android:layout_marginBottom="3dp"/>
         <TextView
+            android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="27 April 2022"

@@ -5,20 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
-import com.example.goalin.util.http.ApiResponseException
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.AuthService
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.EditTextView
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
-    private val scope = CoroutineScope(CoroutineName("LoginScope") + Dispatchers.IO)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -35,39 +31,43 @@ class LoginActivity : AppCompatActivity() {
             startActivity(registerActivity)
         }
 
+        val authServices = ViewModelProvider(this).get(AuthService::class.java)
+
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Harap isi semua bidang diatas", Toast.LENGTH_SHORT).show()
+                Toast
+                    .makeText(this, "Harap isi semua bidang diatas", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
-            val authServices = AuthService(this)
-            loginButton.isEnabled = false
+            lifecycleScope.launch(Dispatchers.IO) {
+                authServices.login(email, password)
+            }
+        }
 
-            scope.launch {
-                try {
-                    authServices.login(email, password)
-                    startActivity(mainActivity)
-                } catch (err: ApiResponseException) {
-                    withContext(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            authServices.loginFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {
+                        loginButton.isEnabled = false
+                    }
+                    is ResponseStatus.Success -> {
+                        startActivity(mainActivity)
+                        finish()
+                    }
+                    is ResponseStatus.Error -> {
+                        Toast
+                            .makeText(this@LoginActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
                         loginButton.isEnabled = true
-                        Toast.makeText(
-                            this@LoginActivity,
-                            err.response().message,
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        scope.cancel()
     }
 
     override fun onBackPressed() {}

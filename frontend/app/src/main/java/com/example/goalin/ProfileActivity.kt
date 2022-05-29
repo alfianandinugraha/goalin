@@ -32,7 +32,7 @@ class ProfileActivity : AppCompatActivity() {
         val loginActivity = Intent(baseContext, LoginActivity::class.java)
         val editProfileActivity = Intent(baseContext, EditProfileActivity::class.java)
 
-        val authService = AuthService(this)
+        val authService = AuthService(application)
         val userService = UserService(this)
 
         logoutButton.setOnClickListener {

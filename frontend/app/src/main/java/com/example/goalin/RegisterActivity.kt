@@ -5,19 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.AuthService
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.EditTextView
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
-    val scope = CoroutineScope(CoroutineName("RegisterScope") + Dispatchers.IO)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -37,6 +34,8 @@ class RegisterActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
+        val authService = ViewModelProvider(this).get(AuthService::class.java)
+
         registerButton.setOnClickListener {
             val fullName = fullNameEditText.text.toString()
             val email = emailEditText.text.toString()
@@ -52,19 +51,26 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val authServices = AuthService(this)
-            registerButton.isEnabled = false
+            lifecycleScope.launch {
+                authService.register(fullName, email, password)
+            }
+        }
 
-            scope.launch {
-                try {
-                    authServices.register(fullName, email, password)
-                    startActivity(mainActivity)
-                } catch (err: ApiResponseException) {
-                    withContext(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            authService.registerFlow.collect {
+                when (it) {
+                    is ResponseStatus.Loading -> {
+                        registerButton.isEnabled = false
+                    }
+                    is ResponseStatus.Success -> {
+                        startActivity(mainActivity)
+                        finish()
+                    }
+                    is ResponseStatus.Error -> {
                         registerButton.isEnabled = true
                         Toast.makeText(
                             this@RegisterActivity,
-                            err.response().message,
+                            it.message,
                             Toast.LENGTH_SHORT
                         ).show()
                     }

@@ -1,20 +1,16 @@
 package com.example.goalin.service
 
 import android.app.Application
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.goalin.model.Goal
 import com.example.goalin.model.ResponseStatus
 import com.example.goalin.repository.GoalRepository
-import com.example.goalin.util.http.ApiResponseException
 import com.example.goalin.util.http.AuthInterceptor
 import com.example.goalin.util.http.Http
 import com.example.goalin.util.parser.ParseResponseError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -35,9 +31,11 @@ class GoalService(application: Application): AndroidViewModel(application) {
 
     private val _goalsFlow = MutableSharedFlow<ResponseStatus<List<Goal>>>(replay = 5)
     private val _storeFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
+    private val _deleteFlow = MutableSharedFlow<ResponseStatus<*>>(replay = 5)
 
     val goalsFlow = _goalsFlow.asSharedFlow()
     val storeFlow = _storeFlow.asSharedFlow()
+    val deleteFlow = _deleteFlow.asSharedFlow()
 
     suspend fun store(body: CreateGoalBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
         _storeFlow.emit(ResponseStatus.Loading())
@@ -92,12 +90,30 @@ class GoalService(application: Application): AndroidViewModel(application) {
         )
     }
 
-    suspend fun delete(goalId: String) = coroutineScope {
+    suspend fun delete(goalId: String) = viewModelScope.launch {
+        _deleteFlow.emit(ResponseStatus.Loading())
+
         val responseDeferred = async { repository.delete(goalId) }
         val response = responseDeferred.await()
 
-        if (!response.isSuccessful) throw ApiResponseException(response)
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
 
-        return@coroutineScope response.body()!!
+            _deleteFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _deleteFlow.emit(
+            ResponseStatus.Success(
+                payload = null,
+                code = response.code(),
+                message = "Berhasil menghapus Goal"
+            )
+        )
     }
 }

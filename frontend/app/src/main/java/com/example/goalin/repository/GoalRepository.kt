@@ -18,5 +18,5 @@ interface GoalRepository {
     suspend fun getAll(): Response<ApiResponseBody<List<Goal>>>
 
     @DELETE("/api/goals/{goalId}")
-    suspend fun delete(@Path("goalId") goalId: String): Response<ApiResponseBody<*>>
+    suspend fun delete(@Path("goalId") goalId: String): Response<ApiResponseBody<Any>>
 }

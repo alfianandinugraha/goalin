@@ -13,7 +13,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.goalin.model.Goal
+import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.GoalService
 import com.example.goalin.ui.BackView
 import com.example.goalin.util.format.Currency
@@ -37,7 +40,6 @@ class GoalActivity : AppCompatActivity() {
 
     private var amount: Float = 0F
     private var total: Float = 0F
-    private val scope = CoroutineScope(CoroutineName("GoalScope") + Dispatchers.IO)
 
     companion object {
         const val CHANGED = 1
@@ -73,7 +75,7 @@ class GoalActivity : AppCompatActivity() {
 
         val mainActivityIntent = Intent(this, MainActivity::class.java)
 
-        val goalService = GoalService(application)
+        val goalService = ViewModelProvider(this).get(GoalService::class.java)
 
         editButton.setOnClickListener {
             startActivity(editGoalActivity)
@@ -85,37 +87,14 @@ class GoalActivity : AppCompatActivity() {
                 .setMessage("Apakah kamu yakin menghapus goal?")
                 .setPositiveButton("Hapus", object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, id: Int) {
-                        scope.launch {
-                            try {
-                                goalService.delete(goal.id)
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        this@GoalActivity,
-                                        "Goal berhasil dihapus",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    mainActivityIntent.putExtra("goal", Gson().toJson(goal))
-                                    setResult(DELETED, mainActivityIntent)
-                                    finish()
-                                }
-                            } catch (err: ApiResponseException) {
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        this@GoalActivity,
-                                        err.message,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
+                        lifecycleScope.launch {
+                            goalService.delete(goal.id)
                         }
                     }
 
                 })
                 .setNegativeButton("Batal", object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, id: Int) {
-
-                    }
-
+                    override fun onClick(dialog: DialogInterface?, id: Int) {}
                 })
                 .show()
         }
@@ -158,6 +137,30 @@ class GoalActivity : AppCompatActivity() {
         notesTextView.text = notesText ?: "-"
         updateNominal()
         updateEnabledButton()
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            goalService.deleteFlow.collect {
+                when (it) {
+                    is ResponseStatus.Loading -> {
+                        Toast
+                            .makeText(this@GoalActivity, "Menghapus...", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                    is ResponseStatus.Success -> {
+                        Toast
+                            .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                        setResult(DELETED, mainActivityIntent)
+                        finish()
+                    }
+                    is ResponseStatus.Error -> {
+                        Toast
+                            .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
     }
 
     private fun updateNominal() {

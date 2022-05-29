@@ -69,7 +69,7 @@ class AddTransactionActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            walletService.walletsFlow.collect {
+            walletService.getAllFlow.collect {
                 when(it) {
                     is ResponseStatus.Loading -> {
 

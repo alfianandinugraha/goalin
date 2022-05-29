@@ -29,12 +29,12 @@ class GoalService(application: Application): AndroidViewModel(application) {
         .build()
         .create(GoalRepository::class.java)
 
-    private val _goalsFlow = MutableSharedFlow<ResponseStatus<List<Goal>>>(replay = 5)
+    private val _getAllFlow = MutableSharedFlow<ResponseStatus<List<Goal>>>(replay = 5)
     private val _storeFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
     private val _deleteFlow = MutableSharedFlow<ResponseStatus<*>>(replay = 5)
     private val _getDetailFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
 
-    val goalsFlow = _goalsFlow.asSharedFlow()
+    val getAllFlow = _getAllFlow.asSharedFlow()
     val storeFlow = _storeFlow.asSharedFlow()
     val deleteFlow = _deleteFlow.asSharedFlow()
     val getDetailFlow = _getDetailFlow.asSharedFlow()
@@ -66,7 +66,7 @@ class GoalService(application: Application): AndroidViewModel(application) {
     }
 
     suspend fun getAll() = viewModelScope.launch(Dispatchers.IO) {
-        _goalsFlow.emit(ResponseStatus.Loading())
+        _getAllFlow.emit(ResponseStatus.Loading())
 
         val responseDeferred = async { repository.getAll() }
         val response = responseDeferred.await()
@@ -74,7 +74,7 @@ class GoalService(application: Application): AndroidViewModel(application) {
         if (!response.isSuccessful) {
             val err = ParseResponseError(response)
 
-            _goalsFlow.emit(
+            _getAllFlow.emit(
                 ResponseStatus.Error(
                     message = err.message,
                     code = response.code(),
@@ -83,7 +83,7 @@ class GoalService(application: Application): AndroidViewModel(application) {
             return@launch
         }
 
-        _goalsFlow.emit(
+        _getAllFlow.emit(
             ResponseStatus.Success(
                 payload = response.body()?.payload!!,
                 code = response.code(),

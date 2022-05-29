@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            goalService.goalsFlow.collect {
+            goalService.getAllFlow.collect {
                 when (it) {
                     is ResponseStatus.Loading -> {}
                     is ResponseStatus.Success -> {

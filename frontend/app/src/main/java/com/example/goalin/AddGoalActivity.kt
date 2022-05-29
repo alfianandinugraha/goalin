@@ -3,7 +3,6 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -86,7 +85,7 @@ class AddGoalActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            categoryService.categoriesFlow.collect {
+            categoryService.getAllFlow.collect {
                 when (it) {
                     is ResponseStatus.Loading -> {
                         addButton.isEnabled = false

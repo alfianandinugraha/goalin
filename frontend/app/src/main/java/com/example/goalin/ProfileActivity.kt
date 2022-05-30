@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +15,7 @@ import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.AuthService
 import com.example.goalin.service.UserService
 import com.example.goalin.ui.ButtonView
+import com.example.goalin.ui.ProgressView
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +27,8 @@ class ProfileActivity : AppCompatActivity() {
 
         val emailTextView = findViewById<TextView>(R.id.email)
         val fullNameTextView = findViewById<TextView>(R.id.full_name)
+        val contentLinearLayout = findViewById<LinearLayout>(R.id.content)
+        val progressView = findViewById<ProgressView>(R.id.progress)
 
         val logoutButton = findViewById<ButtonView>(R.id.logout_btn)
         val toEditProfileButton = findViewById<ButtonView>(R.id.to_edit_profile_btn)
@@ -60,8 +65,14 @@ class ProfileActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             userService.getDetailFlow.collect {
                 when(it) {
-                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Loading -> {
+                        progressView.visibility = View.VISIBLE
+                        contentLinearLayout.visibility = View.GONE
+                    }
                     is ResponseStatus.Success -> {
+                        progressView.visibility = View.GONE
+                        contentLinearLayout.visibility = View.VISIBLE
+
                         fullNameTextView.text = it.payload.fullName
                         emailTextView.text = it.payload.email
 

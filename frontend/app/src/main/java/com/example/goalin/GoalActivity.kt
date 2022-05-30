@@ -103,6 +103,7 @@ class GoalActivity : AppCompatActivity() {
         }
 
         editButton.setOnClickListener {
+            editGoalActivity.putExtra("goal", goalJSON)
             startActivity(editGoalActivity)
         }
 

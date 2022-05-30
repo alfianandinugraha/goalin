@@ -19,19 +19,21 @@
         android:layout_height="wrap_content"
         android:hint="Nama Barang"
         android:text="Laptop"
+        android:id="@+id/name"
         android:layout_marginBottom="20dp" />
     <com.example.goalin.ui.EditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Harga Barang"
         android:text="1200000"
+        android:id="@+id/total"
         android:inputType="numberDecimal"
         android:layout_marginBottom="20dp"/>
-    <com.example.goalin.ui.EditTextView
+    <com.example.goalin.ui.SelectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Pilih Kategori Barang"
-        android:text="Elektronik" />
+        android:id="@+id/category_select"
+        android:hint="Pilih Kategori" />
     <com.example.goalin.ui.ButtonView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

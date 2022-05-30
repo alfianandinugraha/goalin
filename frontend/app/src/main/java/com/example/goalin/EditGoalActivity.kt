@@ -19,6 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EditGoalActivity : AppCompatActivity() {
+    companion object {
+        const val SUCCESS = 41234
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_goal)
@@ -41,7 +45,28 @@ class EditGoalActivity : AppCompatActivity() {
         notesEditTextView.setText(goal.notes)
 
         saveButton.setOnClickListener {
-            finish()
+            val name = nameEditTextView.text.toString()
+            val total = totalEditTextView.text.toString().toFloatOrNull()
+            val notes = notesEditTextView.text.toString()
+            val categoryId = categorySelectView.selectedOption?.value
+
+            if (name.isEmpty() || total === null || categoryId == null) {
+                Toast
+                    .makeText(this, "Harap isi semua bidang diatas", Toast.LENGTH_SHORT)
+                    .show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val body = GoalService.UpdateGoalBodyRequest(
+                    name = name,
+                    total = total,
+                    notes = notes,
+                    categoryId = categoryId
+                )
+
+                goalService.update(goal.id, body)
+            }
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -66,6 +91,29 @@ class EditGoalActivity : AppCompatActivity() {
                             .makeText(this@EditGoalActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
                         finish()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            goalService.updateFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {
+                        saveButton.isEnabled = false
+                    }
+                    is ResponseStatus.Success -> {
+                        Toast
+                            .makeText(this@EditGoalActivity, "Berhasil memperbarui Goal", Toast.LENGTH_SHORT)
+                            .show()
+                        setResult(SUCCESS, intent)
+                        finish()
+                    }
+                    is ResponseStatus.Error -> {
+                        saveButton.isEnabled = true
+                        Toast
+                            .makeText(this@EditGoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }

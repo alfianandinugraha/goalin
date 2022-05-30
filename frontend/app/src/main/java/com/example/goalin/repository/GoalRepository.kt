@@ -8,6 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface GoalRepository {
@@ -22,4 +23,10 @@ interface GoalRepository {
 
     @GET("/api/goals/{goalId}")
     suspend fun getDetail(@Path("goalId") goalId: String): Response<ApiResponseBody<Goal>>
+
+    @PUT("/api/goals/{goalId}")
+    suspend fun update(
+        @Path("goalId") goalId: String,
+        @Body body: GoalService.UpdateGoalBodyRequest
+    ): Response<ApiResponseBody<Any>>
 }

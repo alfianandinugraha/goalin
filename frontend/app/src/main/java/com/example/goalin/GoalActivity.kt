@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -102,11 +103,6 @@ class GoalActivity : AppCompatActivity() {
                 .show()
         }
 
-        editButton.setOnClickListener {
-            editGoalActivity.putExtra("goal", goalJSON)
-            startActivity(editGoalActivity)
-        }
-
         deleteGoalButton.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Hapus Goal")
@@ -150,7 +146,17 @@ class GoalActivity : AppCompatActivity() {
                         transactionService.getAll(goal.id)
                     }
                 }
+                EditGoalActivity.SUCCESS -> {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        goalService.getDetail(goal.id)
+                    }
+                }
             }
+        }
+
+        editButton.setOnClickListener {
+            editGoalActivity.putExtra("goal", goalJSON)
+            startForResult.launch(editGoalActivity)
         }
 
         addTransactionButton.setOnClickListener {
@@ -159,7 +165,7 @@ class GoalActivity : AppCompatActivity() {
         }
 
         nameTextView.text = goal.name
-        notesTextView.text = notesText ?: "-"
+        notesTextView.text = if(notesText?.isEmpty() == true) "-" else notesText
         updateNominal()
         updateEnabledButton()
 
@@ -199,6 +205,10 @@ class GoalActivity : AppCompatActivity() {
                     is ResponseStatus.Success -> {
                         amount = it.payload.amount
                         total = it.payload.total
+
+                        nameTextView.text = it.payload.name
+                        totalTextView.text = it.payload.total.toString()
+
                         updateNominal()
                         updateEnabledButton()
                     }

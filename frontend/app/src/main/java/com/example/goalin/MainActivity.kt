@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.GoalService
 import com.example.goalin.ui.GoalsAdapter
+import com.example.goalin.ui.ProgressView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         val toAddGoalButton = findViewById<FloatingActionButton>(R.id.to_add_goal_btn)
         val toProfileButton = findViewById<LinearLayout>(R.id.to_profile_btn)
         val goalsRecyclerView = findViewById<RecyclerView>(R.id.goals)
+        val progressView = findViewById<ProgressView>(R.id.progress)
 
         toAddGoalButton.setOnClickListener {
             startActivity(
@@ -62,8 +65,14 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             goalService.getAllFlow.collect {
                 when (it) {
-                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Loading -> {
+                        progressView.visibility = View.VISIBLE
+                        goalsRecyclerView.visibility = View.GONE
+                    }
                     is ResponseStatus.Success -> {
+                        progressView.visibility = View.GONE
+                        goalsRecyclerView.visibility = View.VISIBLE
+
                         goalsRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
                         goalsAdapter.goals = it.payload.toMutableList()
                         goalsRecyclerView.adapter = goalsAdapter

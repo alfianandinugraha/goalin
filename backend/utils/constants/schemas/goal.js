@@ -23,7 +23,7 @@ const createGoalSchema = {
     total: {
       type: "number",
     },
-    note: {
+    notes: {
       type: "string",
     },
   },

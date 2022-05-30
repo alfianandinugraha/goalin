@@ -1,9 +1,11 @@
 import Ajv from "ajv";
 import userServices from "services/user";
 import { updateUserBodySchema } from "utils/constants/schemas/user";
+import addFormats from "ajv-formats";
 import { connectAuth } from "utils/helpers/connect";
 
 const ajv = new Ajv();
+addFormats(ajv, { formats: ["email"] });
 
 export default connectAuth()
   .get(async (req, res) => {

@@ -39,5 +39,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Simpan profile"
-        android:id="@+id/to_edit_profile_btn" />
+        android:id="@+id/save_btn" />
 </LinearLayout>

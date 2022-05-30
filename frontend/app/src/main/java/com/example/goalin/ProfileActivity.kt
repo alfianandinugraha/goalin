@@ -3,8 +3,10 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.goalin.model.ResponseStatus
@@ -32,13 +34,23 @@ class ProfileActivity : AppCompatActivity() {
         val authService = AuthService(application)
         val userService = ViewModelProvider(this).get(UserService::class.java)
 
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            when(it.resultCode) {
+                EditProfileActivity.SUCCESS -> {
+                    lifecycleScope.launch {
+                        userService.getDetail()
+                    }
+                }
+            }
+        }
+
         logoutButton.setOnClickListener {
             startActivity(loginActivity)
             authService.logout()
         }
 
         toEditProfileButton.setOnClickListener {
-            startActivity(editProfileActivity)
+            startForResult.launch(editProfileActivity)
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -55,7 +67,7 @@ class ProfileActivity : AppCompatActivity() {
 
                         editProfileActivity.putExtra("user", Gson().toJson(it.payload))
                         toEditProfileButton.setOnClickListener {
-                            startActivity(editProfileActivity)
+                            startForResult.launch(editProfileActivity)
                         }
                     }
                     is ResponseStatus.Error -> {

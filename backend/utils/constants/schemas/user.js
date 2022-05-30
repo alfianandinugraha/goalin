@@ -14,6 +14,7 @@ const updateUserBodySchema = {
   properties: {
     email: {
       type: "string",
+      format: "email",
     },
     fullName: {
       type: "string",

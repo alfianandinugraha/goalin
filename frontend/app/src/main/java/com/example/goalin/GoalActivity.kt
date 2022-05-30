@@ -36,9 +36,28 @@ class GoalActivity : AppCompatActivity() {
     private lateinit var minusTextView: TextView
     private lateinit var rangeThumbView: View
     private lateinit var addTransactionButton: Button
+    private lateinit var notesTextView: TextView
 
     private var amount: Float = 0F
+        set(value) {
+            amountTextView.text = Currency.rupiah(value)
+            field = value
+        }
     private var total: Float = 0F
+        set(value) {
+            totalTextView.text = Currency.rupiah(value)
+            field = value
+        }
+    private var name: String = ""
+        set(value) {
+            nameTextView.text = value
+            field = value
+        }
+    private var notes: String? = ""
+        set(value) {
+            notesTextView.text = value
+            field = value
+        }
 
     private var amountDelete: Float = 0F
 
@@ -51,24 +70,23 @@ class GoalActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goal)
 
-        val goalJSON = intent.getStringExtra("goal")
-
-        val goal = Gson().fromJson(goalJSON, Goal::class.java)
-
-        amount = goal.amount
-        total = goal.total
-        val notesText = goal.notes
-
         nameTextView = findViewById(R.id.name)
         amountTextView = findViewById(R.id.amount)
         totalTextView = findViewById(R.id.total)
         minusTextView = findViewById(R.id.minus)
         rangeThumbView = findViewById(R.id.range_thumb)
+        notesTextView = findViewById(R.id.notes)
+        addTransactionButton = findViewById(R.id.add_transaction)
+
+        val goalJSON = intent.getStringExtra("goal")
+        val goal = Gson().fromJson(goalJSON, Goal::class.java)
+        amount = goal.amount
+        total = goal.total
+        notes = if(goal.notes.isNullOrEmpty()) "-" else goal.notes
+        name = goal.name
 
         val backView = findViewById<BackView>(R.id.back_view)
-        val notesTextView = findViewById<TextView>(R.id.notes)
 
-        addTransactionButton = findViewById<Button>(R.id.add_transaction)
         val deleteGoalButton = findViewById<ImageView>(R.id.delete_goal_btn)
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
         val listTransactionRecyclerView = findViewById<RecyclerView>(R.id.list_transactions)
@@ -82,7 +100,6 @@ class GoalActivity : AppCompatActivity() {
         val transactionService = ViewModelProvider(this).get(TransactionService::class.java)
 
         val transactionAdapter = TransactionAdapter(this)
-
         transactionAdapter.setOnClickDeleteListener = {
             AlertDialog.Builder(this)
                 .setTitle("Hapus Transaksi")
@@ -100,10 +117,6 @@ class GoalActivity : AppCompatActivity() {
                     override fun onClick(dialog: DialogInterface?, id: Int) {}
                 })
                 .show()
-        }
-
-        editButton.setOnClickListener {
-            startActivity(editGoalActivity)
         }
 
         deleteGoalButton.setOnClickListener {
@@ -127,7 +140,9 @@ class GoalActivity : AppCompatActivity() {
         backView.setOnClickListener {
             val newGoal = goal.copy(
                 amount = amount,
-                total = total
+                total = total,
+                name = name,
+                notes = notes
             )
             val isChanged = !goal.equals(newGoal)
 
@@ -149,7 +164,17 @@ class GoalActivity : AppCompatActivity() {
                         transactionService.getAll(goal.id)
                     }
                 }
+                EditGoalActivity.SUCCESS -> {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        goalService.getDetail(goal.id)
+                    }
+                }
             }
+        }
+
+        editButton.setOnClickListener {
+            editGoalActivity.putExtra("goal", goalJSON)
+            startForResult.launch(editGoalActivity)
         }
 
         addTransactionButton.setOnClickListener {
@@ -157,10 +182,7 @@ class GoalActivity : AppCompatActivity() {
             startForResult.launch(addTransactionActivity)
         }
 
-        nameTextView.text = goal.name
-        notesTextView.text = notesText ?: "-"
-        updateNominal()
-        updateEnabledButton()
+        updateUI()
 
         lifecycleScope.launch(Dispatchers.IO) {
             transactionService.getAll(goal.id)
@@ -198,8 +220,10 @@ class GoalActivity : AppCompatActivity() {
                     is ResponseStatus.Success -> {
                         amount = it.payload.amount
                         total = it.payload.total
-                        updateNominal()
-                        updateEnabledButton()
+                        name = it.payload.name
+                        notes = it.payload.notes
+
+                        updateUI()
                     }
                     is ResponseStatus.Error -> {
                         Toast
@@ -234,8 +258,7 @@ class GoalActivity : AppCompatActivity() {
 
                         amount -= amountDelete
 
-                        updateNominal()
-                        updateEnabledButton()
+                        updateUI()
 
                         Toast
                             .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
@@ -252,21 +275,16 @@ class GoalActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateNominal() {
-        val amountText = Currency.rupiah(amount)
-        val totalText = Currency.rupiah(total)
+    private fun updateUI() {
         val minusText = "Tersisa ${Currency.rupiah(abs(amount - total))} lagi"
 
-        amountTextView.text = amountText
-        totalTextView.text = totalText
-        minusTextView.text = minusText
+        minusTextView.text = if(amount < total) minusText else "Sudah terpenuhi"
 
         val layoutParams = rangeThumbView.layoutParams as LinearLayout.LayoutParams
-        layoutParams.weight = (amount / total) * 100
+        val weight = (amount / total) * 100
+        layoutParams.weight = if (weight > 100) 100F else weight
         rangeThumbView.layoutParams = layoutParams
-    }
 
-    private fun updateEnabledButton() {
         addTransactionButton.isEnabled = amount < total
     }
 }

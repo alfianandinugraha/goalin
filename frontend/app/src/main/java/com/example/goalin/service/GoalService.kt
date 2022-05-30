@@ -23,6 +23,13 @@ class GoalService(application: Application): AndroidViewModel(application) {
         val notes: String? = null
     )
 
+    data class UpdateGoalBodyRequest(
+        val name: String,
+        val categoryId: String,
+        val total: Float,
+        val notes: String? = null
+    )
+
     private val repository: GoalRepository = Http
         .builder
         .client(AuthInterceptor.build(getApplication()))
@@ -33,11 +40,13 @@ class GoalService(application: Application): AndroidViewModel(application) {
     private val _storeFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
     private val _deleteFlow = MutableSharedFlow<ResponseStatus<*>>(replay = 5)
     private val _getDetailFlow = MutableSharedFlow<ResponseStatus<Goal>>(replay = 5)
+    private val _updateFlow = MutableSharedFlow<ResponseStatus<Any>>(replay = 5)
 
     val getAllFlow = _getAllFlow.asSharedFlow()
     val storeFlow = _storeFlow.asSharedFlow()
     val deleteFlow = _deleteFlow.asSharedFlow()
     val getDetailFlow = _getDetailFlow.asSharedFlow()
+    val updateFlow = _updateFlow.asSharedFlow()
 
     suspend fun store(body: CreateGoalBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
         _storeFlow.emit(ResponseStatus.Loading())
@@ -142,6 +151,33 @@ class GoalService(application: Application): AndroidViewModel(application) {
                 payload = response.body()?.payload!!,
                 code = response.code(),
                 message = "Login berhasil"
+            )
+        )
+    }
+
+    suspend fun update(goalId: String, body: UpdateGoalBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
+        _updateFlow.emit(ResponseStatus.Loading())
+
+        val responseDeferred = async { repository.update(goalId, body) }
+        val response = responseDeferred.await()
+
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
+
+            _updateFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _updateFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Berhasil memperbarui Goal"
             )
         )
     }

@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.goalin.R
+import com.example.goalin.model.Goal
 import com.example.goalin.model.Transaction
 import com.example.goalin.util.constant.Month
 import com.example.goalin.util.format.Currency
@@ -17,9 +19,14 @@ import java.util.*
 class TransactionAdapter(val context: Context): RecyclerView.Adapter<TransactionAdapter.Holder>() {
     var transactions: MutableList<Transaction> = mutableListOf()
 
+    lateinit var current: Transaction
+
+    var setOnClickDeleteListener: ((transaction: Transaction) -> Unit)? = null;
+
     class Holder(view: View): RecyclerView.ViewHolder(view) {
         val amount: TextView = view.findViewById(R.id.amount)
         val date: TextView = view.findViewById(R.id.date)
+        val deleteBtn: ImageView = view.findViewById(R.id.delete_btn)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -43,8 +50,12 @@ class TransactionAdapter(val context: Context): RecyclerView.Adapter<Transaction
 
         holder.amount.text = amountText
         holder.date.text = dateText
+
+        holder.deleteBtn.setOnClickListener {
+            current = transaction
+            setOnClickDeleteListener?.invoke(transaction)
+        }
     }
 
     override fun getItemCount(): Int = transactions.size
-
 }

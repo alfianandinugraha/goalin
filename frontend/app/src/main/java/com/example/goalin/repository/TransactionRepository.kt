@@ -5,6 +5,7 @@ import com.example.goalin.service.TransactionService
 import com.example.goalin.util.http.ApiResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -18,4 +19,10 @@ interface TransactionRepository {
 
     @GET("/api/goals/{goalId}/transactions")
     suspend fun getAll(@Path("goalId") goalId: String): Response<ApiResponseBody<List<Transaction>>>
+
+    @DELETE("/api/goals/{goalId}/transactions/{transactionId}")
+    suspend fun delete(
+        @Path("goalId") goalId: String,
+        @Path("transactionId") transactionId: String
+    ): Response<ApiResponseBody<Any>>
 }

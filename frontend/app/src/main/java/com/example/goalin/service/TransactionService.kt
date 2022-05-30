@@ -32,9 +32,11 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
 
     private val _storeFlow = MutableSharedFlow<ResponseStatus<Transaction>>(replay = 5)
     private val _getAllFlow = MutableSharedFlow<ResponseStatus<List<Transaction>>>(replay = 5)
+    private val _deleteFlow = MutableSharedFlow<ResponseStatus<Any>>(replay = 5)
 
     val storeFlow = _storeFlow.asSharedFlow()
     val getAllFlow = _getAllFlow.asSharedFlow()
+    val deleteFlow = _deleteFlow.asSharedFlow()
 
     suspend fun store(body: CreateTransactionBodyRequest) = viewModelScope.launch(Dispatchers.IO) {
         _storeFlow.emit(ResponseStatus.Loading())
@@ -69,8 +71,6 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
         val responseDeferred = async { repository.getAll(goalId) }
         val response = responseDeferred.await()
 
-        Log.d("Response", goalId)
-
         if (!response.isSuccessful) {
             val err = ParseResponseError(response)
 
@@ -88,6 +88,33 @@ class TransactionService(application: Application) : AndroidViewModel(applicatio
                 payload = response.body()?.payload!!,
                 code = response.code(),
                 message = "Berhasil mendapatkan semua transaksi"
+            )
+        )
+    }
+
+    suspend fun delete(goalId: String, transactionId: String) = viewModelScope.launch(Dispatchers.IO) {
+        _deleteFlow.emit(ResponseStatus.Loading())
+
+        val responseDeferred = async { repository.delete(goalId, transactionId) }
+        val response = responseDeferred.await()
+
+        if (!response.isSuccessful) {
+            val err = ParseResponseError(response)
+
+            _deleteFlow.emit(
+                ResponseStatus.Error(
+                    message = err.message,
+                    code = response.code(),
+                )
+            )
+            return@launch
+        }
+
+        _deleteFlow.emit(
+            ResponseStatus.Success(
+                payload = response.body()?.payload!!,
+                code = response.code(),
+                message = "Berhasil menghapus transaksi"
             )
         )
     }

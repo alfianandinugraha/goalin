@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -40,6 +39,8 @@ class GoalActivity : AppCompatActivity() {
 
     private var amount: Float = 0F
     private var total: Float = 0F
+
+    private var amountDelete: Float = 0F
 
     companion object {
         const val CHANGED = 1
@@ -81,6 +82,25 @@ class GoalActivity : AppCompatActivity() {
         val transactionService = ViewModelProvider(this).get(TransactionService::class.java)
 
         val transactionAdapter = TransactionAdapter(this)
+
+        transactionAdapter.setOnClickDeleteListener = {
+            AlertDialog.Builder(this)
+                .setTitle("Hapus Transaksi")
+                .setMessage("Apakah kamu yakin menghapus transaksi dengan jumlah Rp${it.amount}?")
+                .setPositiveButton("Hapus Transaksi", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, id: Int) {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            transactionService.delete(it.goalId, it.id)
+                            amountDelete = it.amount
+                        }
+                    }
+
+                })
+                .setNegativeButton("Batal", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, id: Int) {}
+                })
+                .show()
+        }
 
         editButton.setOnClickListener {
             startActivity(editGoalActivity)
@@ -201,6 +221,32 @@ class GoalActivity : AppCompatActivity() {
                         listTransactionRecyclerView.adapter = transactionAdapter
                     }
                     is ResponseStatus.Error -> {}
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            transactionService.deleteFlow.collect {
+                when(it) {
+                    is ResponseStatus.Loading -> {}
+                    is ResponseStatus.Success -> {
+                        transactionService.getAll(goal.id)
+
+                        amount -= amountDelete
+
+                        updateNominal()
+                        updateEnabledButton()
+
+                        Toast
+                            .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    is ResponseStatus.Error -> {
+                        amountDelete = 0F
+                        Toast
+                            .makeText(this@GoalActivity, it.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             }
         }

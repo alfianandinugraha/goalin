@@ -29,6 +29,12 @@
         android:id="@+id/total"
         android:inputType="numberDecimal"
         android:layout_marginBottom="20dp"/>
+    <com.example.goalin.ui.EditTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Catatan"
+        android:id="@+id/notes"
+        android:layout_marginBottom="20dp"/>
     <com.example.goalin.ui.SelectView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

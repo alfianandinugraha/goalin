@@ -12,6 +12,7 @@ import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.CategoryService
 import com.example.goalin.service.GoalService
 import com.example.goalin.ui.ButtonView
+import com.example.goalin.ui.EditTextView
 import com.example.goalin.ui.SelectView
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -26,16 +27,18 @@ class EditGoalActivity : AppCompatActivity() {
 
         val goal = Gson().fromJson(goalJSON, Goal::class.java)
 
-        val nameTextView = findViewById<TextView>(R.id.name)
-        val totalTextView = findViewById<TextView>(R.id.total)
+        val nameEditTextView = findViewById<EditTextView>(R.id.name)
+        val totalEditTextView = findViewById<EditTextView>(R.id.total)
+        val notesEditTextView = findViewById<EditTextView>(R.id.notes)
         val saveButton = findViewById<ButtonView>(R.id.save_btn)
         val categorySelectView = findViewById<SelectView<String>>(R.id.category_select)
 
         val goalService = ViewModelProvider(this).get(GoalService::class.java)
         val categoryService = ViewModelProvider(this).get(CategoryService::class.java)
 
-        nameTextView.text = goal.name
-        totalTextView.text = goal.total.toString()
+        nameEditTextView.setText(goal.name)
+        totalEditTextView.setText(goal.total.toString())
+        notesEditTextView.setText(goal.notes)
 
         saveButton.setOnClickListener {
             finish()

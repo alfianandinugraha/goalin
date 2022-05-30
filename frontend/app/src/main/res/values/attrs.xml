@@ -6,4 +6,7 @@
     <declare-styleable name="SelectView">
         <attr name="android:hint" format="string" />
     </declare-styleable>
+    <declare-styleable name="ProgressView">
+        <attr name="android:text" format="string" />
+    </declare-styleable>
 </resources>

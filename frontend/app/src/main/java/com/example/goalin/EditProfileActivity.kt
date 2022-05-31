@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +12,7 @@ import com.example.goalin.model.User
 import com.example.goalin.service.UserService
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.EditTextView
+import com.example.goalin.ui.FloatingProgressView
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
@@ -29,6 +31,7 @@ class EditProfileActivity : AppCompatActivity() {
         val fullNameEditText = findViewById<EditTextView>(R.id.full_name_edit_text)
         val emailEditText = findViewById<EditTextView>(R.id.email_edit_text)
         val saveBtn = findViewById<ButtonView>(R.id.save_btn)
+        val floatingProgress = findViewById<FloatingProgressView>(R.id.floating_progress)
 
         val userService = ViewModelProvider(this).get(UserService::class.java)
 
@@ -57,7 +60,7 @@ class EditProfileActivity : AppCompatActivity() {
             userService.updateFlow.collect {
                 when(it) {
                     is ResponseStatus.Loading -> {
-                        saveBtn.isEnabled = false
+                        floatingProgress.visibility = View.VISIBLE
                     }
                     is ResponseStatus.Success -> {
                         Toast
@@ -70,7 +73,7 @@ class EditProfileActivity : AppCompatActivity() {
                         Toast
                             .makeText(this@EditProfileActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
-                        saveBtn.isEnabled = true
+                        floatingProgress.visibility = View.GONE
                     }
                 }
             }

@@ -1,50 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddTransactionActivity"
-    android:paddingTop="37dp"
-    android:paddingHorizontal="20dp"
-    android:orientation="vertical">
-    <com.example.goalin.ui.BackView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:text="Tambah Transaksi"
-        style="@style/style_sub_title"/>
-    <com.example.goalin.ui.EditTextView
+    tools:context=".AddTransactionActivity">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nama Barang"
-        android:text="Laptop"
-        android:layout_marginBottom="20dp"
-        android:id="@+id/name_edit_text_view"
-        android:enabled="false" />
-    <com.example.goalin.ui.EditTextView
+        android:paddingTop="37dp"
+        android:paddingHorizontal="20dp"
+        android:orientation="vertical">
+        <com.example.goalin.ui.BackView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="Tambah Transaksi"
+            style="@style/style_sub_title"/>
+        <com.example.goalin.ui.EditTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nama Barang"
+            android:text="Laptop"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/name_edit_text_view"
+            android:enabled="false" />
+        <com.example.goalin.ui.EditTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Jumlah Uang"
+            android:inputType="numberDecimal"
+            android:id="@+id/amount_edit_text_view"
+            android:layout_marginBottom="20dp"/>
+        <com.example.goalin.ui.SelectView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Pilih Dompet"
+            android:id="@+id/wallet_select_view"/>
+        <com.example.goalin.ui.DatePickerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tanggal"
+            android:id="@+id/date_picker" />
+        <com.example.goalin.ui.ButtonView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tambah Transaksi"
+            android:layout_marginTop="40dp"
+            android:enabled="false"
+            android:id="@+id/save_btn" />
+    </LinearLayout>
+    <com.example.goalin.ui.FloatingProgressView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Jumlah Uang"
-        android:inputType="numberDecimal"
-        android:id="@+id/amount_edit_text_view"
-        android:layout_marginBottom="20dp"/>
-    <com.example.goalin.ui.SelectView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:hint="Pilih Dompet"
-        android:id="@+id/wallet_select_view"/>
-    <com.example.goalin.ui.DatePickerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Tanggal"
-        android:id="@+id/date_picker" />
-    <com.example.goalin.ui.ButtonView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tambah Transaksi"
-        android:layout_marginTop="40dp"
-        android:enabled="false"
-        android:id="@+id/save_btn" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/floating_progress"
+        android:visibility="gone"/>
+</RelativeLayout>

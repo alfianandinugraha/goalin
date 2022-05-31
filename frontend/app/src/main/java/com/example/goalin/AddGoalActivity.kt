@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,7 @@ import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.CategoryService
 import com.example.goalin.service.GoalService
 import com.example.goalin.ui.ButtonView
+import com.example.goalin.ui.FloatingProgressView
 import com.example.goalin.ui.SelectView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ class AddGoalActivity : AppCompatActivity() {
         val nameTextView = findViewById<TextView>(R.id.name)
         val totalTextView = findViewById<TextView>(R.id.total)
 
+        val floatingProgress = findViewById<FloatingProgressView>(R.id.floating_progress)
         val addButton = findViewById<ButtonView>(R.id.add_btn)
 
         val categoryService = ViewModelProvider(this).get(CategoryService::class.java)
@@ -64,7 +67,7 @@ class AddGoalActivity : AppCompatActivity() {
             goalService.storeFlow.collect {
                 when (it) {
                     is ResponseStatus.Loading -> {
-                        addButton.isEnabled = false
+                        floatingProgress.visibility = View.VISIBLE
                     }
                     is ResponseStatus.Success -> {
                         Toast
@@ -75,7 +78,7 @@ class AddGoalActivity : AppCompatActivity() {
                         finish()
                     }
                     is ResponseStatus.Error -> {
-                        addButton.isEnabled = true
+                        floatingProgress.visibility = View.GONE
                         Toast
                             .makeText(this@AddGoalActivity, it.message, Toast.LENGTH_SHORT)
                             .show()

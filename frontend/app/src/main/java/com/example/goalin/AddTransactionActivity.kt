@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,7 @@ import com.example.goalin.service.WalletService
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.DatePickerView
 import com.example.goalin.ui.EditTextView
+import com.example.goalin.ui.FloatingProgressView
 import com.example.goalin.ui.SelectView
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +36,7 @@ class AddTransactionActivity : AppCompatActivity() {
         val walletSelectView = findViewById<SelectView<String>>(R.id.wallet_select_view)
         val nameEditTextView = findViewById<EditTextView>(R.id.name_edit_text_view)
         val amountEditTextView = findViewById<EditTextView>(R.id.amount_edit_text_view)
+        val floatingProgress = findViewById<FloatingProgressView>(R.id.floating_progress)
         val datePicker = findViewById<DatePickerView>(R.id.date_picker)
 
         val transactionService = ViewModelProvider(this).get(TransactionService::class.java)
@@ -94,7 +97,7 @@ class AddTransactionActivity : AppCompatActivity() {
             transactionService.storeFlow.collect {
                 when(it) {
                     is ResponseStatus.Loading -> {
-                        saveButton.isEnabled = false
+                        floatingProgress.visibility = View.VISIBLE
                     }
                     is ResponseStatus.Success -> {
                         Toast
@@ -105,7 +108,7 @@ class AddTransactionActivity : AppCompatActivity() {
                         finish()
                     }
                     is ResponseStatus.Error -> {
-                        saveButton.isEnabled = true
+                        floatingProgress.visibility = View.GONE
                         Toast
                             .makeText(this@AddTransactionActivity, it.message, Toast.LENGTH_SHORT)
                             .show()

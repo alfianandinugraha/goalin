@@ -3,6 +3,7 @@ package com.example.goalin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,7 @@ import com.example.goalin.model.ResponseStatus
 import com.example.goalin.service.AuthService
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.EditTextView
+import com.example.goalin.ui.FloatingProgressView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -23,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
         val registerTextView = findViewById<TextView>(R.id.register_text)
         val passwordEditText = findViewById<EditTextView>(R.id.password)
         val loginButton = findViewById<ButtonView>(R.id.login_btn)
+        val floatingProgress = findViewById<FloatingProgressView>(R.id.floating_progress)
 
         val mainActivity = Intent(this, MainActivity::class.java)
         val registerActivity = Intent(this, RegisterActivity::class.java)
@@ -53,17 +56,17 @@ class LoginActivity : AppCompatActivity() {
             authServices.loginFlow.collect {
                 when(it) {
                     is ResponseStatus.Loading -> {
-                        loginButton.isEnabled = false
+                        floatingProgress.visibility = View.VISIBLE
                     }
                     is ResponseStatus.Success -> {
                         startActivity(mainActivity)
                         finish()
                     }
                     is ResponseStatus.Error -> {
+                        floatingProgress.visibility = View.GONE
                         Toast
                             .makeText(this@LoginActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
-                        loginButton.isEnabled = true
                     }
                 }
             }

@@ -53,6 +53,18 @@
                         android:src="@drawable/ic_baseline_person_white"/>
                 </LinearLayout>
             </LinearLayout>
+            <com.example.goalin.ui.EmptyListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/empty_state"
+                android:text="Belum ada goal"
+                android:visibility="gone"/>
+            <com.example.goalin.ui.ProgressView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progress"
+                android:text="Memuat target"
+                android:visibility="gone" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

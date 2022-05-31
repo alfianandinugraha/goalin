@@ -23,6 +23,7 @@ import com.example.goalin.service.TransactionService
 import com.example.goalin.ui.BackView
 import com.example.goalin.util.format.Currency
 import com.example.goalin.ui.ButtonView
+import com.example.goalin.ui.EmptyListView
 import com.example.goalin.ui.ProgressView
 import com.example.goalin.ui.TransactionAdapter
 import com.google.gson.Gson
@@ -94,6 +95,7 @@ class GoalActivity : AppCompatActivity() {
         val editButton = findViewById<ButtonView>(R.id.edit_btn)
         val contentLinearLayout = findViewById<LinearLayout>(R.id.content)
         val listTransactionRecyclerView = findViewById<RecyclerView>(R.id.list_transactions)
+        val emptyListView = findViewById<EmptyListView>(R.id.empty_state)
 
         val editGoalActivity = Intent(this, EditGoalActivity::class.java)
         val addTransactionActivity = Intent(this, AddTransactionActivity::class.java)
@@ -250,10 +252,12 @@ class GoalActivity : AppCompatActivity() {
                     is ResponseStatus.Loading -> {
                         transactionProgressView.visibility = View.VISIBLE
                         listTransactionRecyclerView.visibility = View.GONE
+                        emptyListView.visibility = View.GONE
                     }
                     is ResponseStatus.Success -> {
                         transactionProgressView.visibility = View.GONE
                         listTransactionRecyclerView.visibility = View.VISIBLE
+                        emptyListView.visibility = if (it.payload.isEmpty()) View.VISIBLE else View.GONE
 
                         listTransactionRecyclerView.layoutManager = LinearLayoutManager(this@GoalActivity)
                         transactionAdapter.transactions = it.payload.toMutableList()

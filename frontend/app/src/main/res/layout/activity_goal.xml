@@ -124,6 +124,12 @@
                         android:textSize="20dp"
                         android:textStyle="bold"
                         android:layout_marginBottom="20dp" />
+                    <com.example.goalin.ui.EmptyListView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Belum ada transaksi"
+                        android:visibility="gone"
+                        android:id="@+id/empty_state"/>
                     <com.example.goalin.ui.ProgressView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

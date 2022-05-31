@@ -3,6 +3,7 @@ package com.example.goalin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +14,7 @@ import com.example.goalin.service.CategoryService
 import com.example.goalin.service.GoalService
 import com.example.goalin.ui.ButtonView
 import com.example.goalin.ui.EditTextView
+import com.example.goalin.ui.FloatingProgressView
 import com.example.goalin.ui.SelectView
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +38,7 @@ class EditGoalActivity : AppCompatActivity() {
         val notesEditTextView = findViewById<EditTextView>(R.id.notes)
         val saveButton = findViewById<ButtonView>(R.id.save_btn)
         val categorySelectView = findViewById<SelectView<String>>(R.id.category_select)
+        val floatingProgress = findViewById<FloatingProgressView>(R.id.floating_progress)
 
         val goalService = ViewModelProvider(this).get(GoalService::class.java)
         val categoryService = ViewModelProvider(this).get(CategoryService::class.java)
@@ -100,7 +103,7 @@ class EditGoalActivity : AppCompatActivity() {
             goalService.updateFlow.collect {
                 when(it) {
                     is ResponseStatus.Loading -> {
-                        saveButton.isEnabled = false
+                        floatingProgress.visibility = View.VISIBLE
                     }
                     is ResponseStatus.Success -> {
                         Toast
@@ -110,7 +113,7 @@ class EditGoalActivity : AppCompatActivity() {
                         finish()
                     }
                     is ResponseStatus.Error -> {
-                        saveButton.isEnabled = true
+                        floatingProgress.visibility = View.GONE
                         Toast
                             .makeText(this@EditGoalActivity, it.message, Toast.LENGTH_SHORT)
                             .show()
